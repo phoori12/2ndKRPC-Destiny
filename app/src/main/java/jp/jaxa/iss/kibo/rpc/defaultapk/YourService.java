@@ -179,7 +179,7 @@ public class YourService extends KiboRpcService {
         TimeUnit.SECONDS.sleep(timer);
     }
 
-    public String QRscaner(Bitmap source) // removed static
+    public String QRscaner(Bitmap source) // removed static //
     {
         String result = null;
 

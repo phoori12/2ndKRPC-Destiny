@@ -6,7 +6,10 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0900d552-2724-408a-a688-3a1b4cfeef08" name="Default Changelist" comment="" />
+    <list default="true" id="0900d552-2724-408a-a688-3a1b4cfeef08" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,8 +33,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="78" column="56" lean-forward="true" selection-start-line="78" selection-start-column="56" selection-end-line="78" selection-end-column="56" />
+            <state relative-caret-position="374">
+              <caret line="181" column="62" selection-start-line="181" selection-start-column="62" selection-end-line="181" selection-end-column="62" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#runPlan2#0;class#YourService#0" />
@@ -56,6 +59,9 @@
       </file>
     </leaf>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -64,11 +70,14 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-63" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -76,49 +85,9 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="APK_A1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="APK_A1" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="APK_A1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="APK_A1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Gradle: APK_A1:kibo_rpc_api:unspecified@aar" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="APK_A1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Gradle: APK_A1:kibo_rpc_api:unspecified@aar" type="70bed36:NamedLibraryElementNode" />
-              <item name="classes.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="APK_A1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Gradle: APK_A1:kibo_rpc_api:unspecified@aar" type="70bed36:NamedLibraryElementNode" />
-              <item name="classes.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="APK_A1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Gradle: APK_A1:kibo_rpc_api:unspecified@aar" type="70bed36:NamedLibraryElementNode" />
-              <item name="classes.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="types" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -222,7 +191,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
@@ -255,12 +224,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
           <caret line="29" selection-start-line="29" selection-end-line="29" />
         </state>
       </provider>
+      <provider editor-type-id="android-manifest" />
     </entry>
     <entry file="jar://$USER_HOME$/.android/build-cache/aa40c332c9db36b148de6cfccaa996bec6f61a8c/output/jars/classes.jar!/jp/jaxa/iss/kibo/rpc/api/types/PointCloud.class">
       <provider selected="true" editor-type-id="text-editor">
@@ -271,8 +240,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="78" column="56" lean-forward="true" selection-start-line="78" selection-start-column="56" selection-end-line="78" selection-end-column="56" />
+        <state relative-caret-position="374">
+          <caret line="181" column="62" selection-start-line="181" selection-start-column="62" selection-end-line="181" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#runPlan2#0;class#YourService#0" />
