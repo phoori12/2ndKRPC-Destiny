@@ -6,7 +6,11 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0900d552-2724-408a-a688-3a1b4cfeef08" name="Default Changelist" comment="" />
+    <list default="true" id="0900d552-2724-408a-a688-3a1b4cfeef08" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,14 +34,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="181" column="62" selection-start-line="181" selection-start-column="62" selection-end-line="181" selection-end-column="62" />
+            <state relative-caret-position="545">
+              <caret line="150" column="59" lean-forward="true" selection-start-line="150" selection-start-column="59" selection-end-line="150" selection-end-column="59" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#runPlan2#0;class#YourService#0" />
                 <element signature="method#runPlan3#0;class#YourService#0" />
                 <element signature="method#parseQRinfo#0;class#YourService#0" />
                 <element signature="method#sleep#0;class#YourService#0" />
+                <element signature="method#QRscaner#0;class#YourService#0" />
                 <element signature="method#moveToWrapper#0;class#YourService#0" />
                 <element signature="method#rotationCalculator#0;class#YourService#0" />
               </folding>
@@ -81,10 +86,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="ProjectPane" />
       <pane id="PackagesPane" />
       <pane id="AndroidView" />
-      <pane id="ProjectPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -237,14 +242,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="181" column="62" selection-start-line="181" selection-start-column="62" selection-end-line="181" selection-end-column="62" />
+        <state relative-caret-position="545">
+          <caret line="150" column="59" lean-forward="true" selection-start-line="150" selection-start-column="59" selection-end-line="150" selection-end-column="59" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#runPlan2#0;class#YourService#0" />
             <element signature="method#runPlan3#0;class#YourService#0" />
             <element signature="method#parseQRinfo#0;class#YourService#0" />
             <element signature="method#sleep#0;class#YourService#0" />
+            <element signature="method#QRscaner#0;class#YourService#0" />
             <element signature="method#moveToWrapper#0;class#YourService#0" />
             <element signature="method#rotationCalculator#0;class#YourService#0" />
           </folding>

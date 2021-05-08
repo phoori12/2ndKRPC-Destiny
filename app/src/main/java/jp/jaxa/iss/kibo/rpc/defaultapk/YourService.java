@@ -6,10 +6,7 @@ import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 
-import jp.jaxa.iss.kibo.rpc.api.types.PointCloud;
-
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.util.Log;
 
 import net.sourceforge.zbar.Config;
@@ -19,7 +16,6 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
 import org.opencv.android.Utils;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvException;
 import org.opencv.core.CvType;
@@ -152,6 +148,7 @@ public class YourService extends KiboRpcService {
                     result = ids.get(0, 0)[0];
                     Log.d("AR_IDs", "Result : " + result);
                     Log.d("AR_IDs", ids.dump());
+                    Log.d("AR_IDs", ""+ids.get(0,0).length);
                     break;
                 }
             } catch (Exception e) {
