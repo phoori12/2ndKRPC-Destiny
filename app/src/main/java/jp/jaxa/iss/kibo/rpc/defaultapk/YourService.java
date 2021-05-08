@@ -103,7 +103,7 @@ public class YourService extends KiboRpcService {
 
         Kinematics astrobee = api.getTrustedRobotKinematics();
         Point point = astrobee.getPosition();
-        Quaternion IgniteAngle = rotationCalculator(point.getX()-0.057, point.getY(), point.getZ()+0.1111, target.getX(), target.getY(), target.getZ());
+        Quaternion IgniteAngle = rotationCalculator(point.getX()-0.057, point.getY(), point.getZ()+0.1111, target.getX(), -10.4, target.getZ());
         Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
         moveToWrapper(point.getX()-0.057, point.getY(), point.getZ()+0.1111, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 
@@ -203,7 +203,7 @@ public class YourService extends KiboRpcService {
             Log.d("calculateDat", "W: "+ center_w + " H: "+ center_h + " depth: " + depth_y);
             Kinematics astrobee = api.getTrustedRobotKinematics();
             Point _point = astrobee.getPosition();
-            result[0] = _point.getX() - center_w;
+            result[0] = _point.getX() + center_w;
             result[1] = _point.getY() - depth_y;
             result[2] = _point.getZ() + center_h;
             Log.d("TargetPos", "X: "+ result[0] + " Y: "+ result[1] + " Z: " + result[2]);
