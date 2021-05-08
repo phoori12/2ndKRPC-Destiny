@@ -1,15 +1,13 @@
 package jp.jaxa.iss.kibo.rpc.defaultapk;
 
+import gov.nasa.arc.astrobee.Kinematics;
 import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 
-import jp.jaxa.iss.kibo.rpc.api.types.PointCloud;
-
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.util.Log;
 
 import net.sourceforge.zbar.Config;
@@ -19,7 +17,6 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
 import org.opencv.android.Utils;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvException;
 import org.opencv.core.CvType;
@@ -29,7 +26,9 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -96,7 +95,22 @@ public class YourService extends KiboRpcService {
         api.sendDiscoveredQR(QRPointA);
         QRData = parseQRinfo(QRPointA);
         Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
-        AR_scanAndLocalize(false);
+        ////////////////////////// AR PROCESS //////////////////////////
+
+        AR_result targetData = AR_scanAndLocalize(false);
+        Point target = targetData.getTargetLocation();
+
+
+        Kinematics astrobee = api.getTrustedRobotKinematics();
+        Point point = astrobee.getPosition();
+        Quaternion IgniteAngle = rotationCalculator(point.getX()-0.057, point.getY(), point.getZ()+0.1111, target.getX(), -10.4, target.getZ());
+        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
+        moveToWrapper(point.getX()-0.057, point.getY(), point.getZ()+0.1111, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+
+
+        api.laserControl(true);
+        api.takeSnapshot();
+
         //moveToWrapper(QRData[1],QRData[2],QRData[3],0,0,-0.707,0.707,0);
 
 
@@ -114,26 +128,114 @@ public class YourService extends KiboRpcService {
         // write here your plan 3
     }
 
-    public void AR_scanAndLocalize(boolean status) {
+    class AR_result  {
+
+        private double[] AR_ids = new double[4];
+        private double[][] tvecs = new double[4][3];
+        private double selected_id;
+
+        public AR_result (Mat ids, Mat _tvecs) {
+            Log.d("AR_RESULT", "Class called");
+            Log.d("AR_RESULT", ids.dump());
+            Log.d("AR_RESULT", ""+ids.rows());
+//            this.AR_ids = ids;_
+//            this.tvecs = _tvecs;
+            if (ids.rows() == 4) { // get all ar's corner
+                this.selected_id = 0.0; // means we got full package
+                ///////// sorting ////////
+                Log.d("AR_RESULT", "Start sort");
+                for (int i = 0;i < 4;i++) {
+                    Log.d("AR_RESULT", "sorting "+(int)(ids.get(i,0)[0]));
+                    if ((int)(ids.get(i,0)[0]) == 1) {
+                        this.AR_ids[0] = ids.get(i,0)[0];
+                        this.tvecs[0][0] = _tvecs.get(i,0)[0];
+                        this.tvecs[0][1] = _tvecs.get(i,0)[1];
+                        this.tvecs[0][2] = _tvecs.get(i,0)[2];
+                    } else if ((int)(ids.get(i,0)[0]) == 2) {
+                        this.AR_ids[1] = ids.get(i,0)[0];
+                        this.tvecs[1][0] = _tvecs.get(i,0)[0];
+                        this.tvecs[1][1] = _tvecs.get(i,0)[1];
+                        this.tvecs[1][2] = _tvecs.get(i,0)[2];
+                    } else if ((int)(ids.get(i,0)[0]) == 3) {
+                        this.AR_ids[2] = ids.get(i,0)[0];
+                        this.tvecs[2][0] = _tvecs.get(i,0)[0];
+                        this.tvecs[2][1] = _tvecs.get(i,0)[1];
+                        this.tvecs[2][2] = _tvecs.get(i,0)[2];
+                    }else if ((int)(ids.get(i,0)[0]) == 4) {
+                        this.AR_ids[3] = ids.get(i,0)[0];
+                        this.tvecs[3][0] = _tvecs.get(i,0)[0];
+                        this.tvecs[3][1] = _tvecs.get(i,0)[1];
+                        this.tvecs[3][2] = _tvecs.get(i,0)[2];
+                    }
+                }
+//                Log.d("AR_RESULTa", "" + ids.get(0,0)[0] + " "+ ids.get(1,0)[0] + " "+ ids.get(2,0)[0] + " "+ ids.get(3,0)[0] + " ");
+//                Log.d("AR_RESULTa", "" + _tvecs.get(0,0)[0] + " "+  _tvecs.get(0,0)[1] + " "+ _tvecs.get(0,0)[2]);
+//                Log.d("AR_RESULTa", "" + _tvecs.get(1,0)[0] + " "+  _tvecs.get(1,0)[1] + " "+ _tvecs.get(1,0)[2]);
+//                Log.d("AR_RESULTa", "" + _tvecs.get(2,0)[0] + " "+  _tvecs.get(2,0)[1] + " "+ _tvecs.get(2,0)[2]);
+//                Log.d("AR_RESULTa", "" + _tvecs.get(3,0)[0] + " "+  _tvecs.get(3,0)[1] + " "+ _tvecs.get(3,0)[2]);
+                Log.d("AR_RESULT", "End sort");
+                Log.d("AR_RESULT", Arrays.toString(AR_ids));
+                Log.d("AR_RESULT",  Arrays.toString(tvecs[0]));
+                Log.d("AR_RESULT",  Arrays.toString(tvecs[1]));
+                Log.d("AR_RESULT",  Arrays.toString(tvecs[2]));
+                Log.d("AR_RESULT",  Arrays.toString(tvecs[3]));
+            } else if (ids.rows() != 0 && ids.rows() < 4) { // get first ar and let loose
+                this.selected_id = ids.get(0,0)[0];
+                this.tvecs[0][0] = _tvecs.get(0,0)[0];
+                this.tvecs[0][1] = _tvecs.get(0,0)[1];
+                this.tvecs[0][2] = _tvecs.get(0,0)[2];
+            } else {
+                Log.e("AR discover", "Failed To read Array");
+            }
+        }
+
+        public Point getTargetLocation () {
+            double center_w = 0.0;
+            double center_h = 0.0;
+            double depth_y = 0.0;
+            double[] result = new double[3];
+
+            if (selected_id == 0.0) { // all 4 ar
+                center_w = (((tvecs[0][0] + tvecs[1][0]) / 2) + ((tvecs[2][0] + tvecs[3][0]) / 2)) / 2;
+                center_h = (((tvecs[0][1] + tvecs[3][1]) / 2) + ((tvecs[1][1] + tvecs[2][1]) / 2)) / 2;
+                depth_y = (tvecs[0][2] + tvecs[1][2] + tvecs[2][2] + tvecs[3][2]) / 4;
+            }
+            Log.d("calculateDat", "W: "+ center_w + " H: "+ center_h + " depth: " + depth_y);
+            Kinematics astrobee = api.getTrustedRobotKinematics();
+            Point _point = astrobee.getPosition();
+            result[0] = _point.getX() + center_w;
+            result[1] = _point.getY() - depth_y;
+            result[2] = _point.getZ() + center_h;
+            Log.d("TargetPos", "X: "+ result[0] + " Y: "+ result[1] + " Z: " + result[2]);
+
+            return new Point(result[0],result[1],result[2]);
+        }
+
+
+    }
+
+
+
+
+
+
+    public AR_result AR_scanAndLocalize(boolean status) {
         int row = 0, col = 0;
         double[][] NavCamInst = api.getNavCamIntrinsics();
         Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
         Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
-        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
+//        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
         cameraMatrix.put(row, col, NavCamInst[0]);
         distCoeffs.put(row, col, NavCamInst[1]);
         Log.d("cameraMatrix", cameraMatrix.dump());
         Log.d("distCoeffs", distCoeffs.dump());
 
         Mat ids = new Mat();
+        Mat tvecs = new Mat();
+        Mat rvecs = new Mat();
         List<Mat> corners = new ArrayList<>();
         List<Mat> rej = new ArrayList<>();
         double result = 0.0;
-//        Log.d("AR", "Started undistorting AR");
-
-//        Imgproc.undistort(AR_snap, dst, cameraMatrix, distCoeffs);
-//        Log.d("AR", "Finished undistorting AR");
-
         Log.d("AR", "Started reading AR");
         while (result == 0) {
             AR_snap = api.getMatNavCam();
@@ -149,9 +251,12 @@ public class YourService extends KiboRpcService {
                 Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
                 Aruco.detectMarkers(AR_mat, dictionary, corners, ids, parameters,rej,cameraMatrix,distCoeffs);
                 if (!ids.empty()) {
+                    Aruco.estimatePoseSingleMarkers(corners, 0.05f, cameraMatrix, distCoeffs, rvecs, tvecs);
                     result = ids.get(0, 0)[0];
                     Log.d("AR_IDs", "Result : " + result);
                     Log.d("AR_IDs", ids.dump());
+                    Log.d("AR_IDs", "col "+ids.cols()+" row "+ids.rows());
+                    Log.d("AR_IDs", "col "+tvecs.cols()+" row "+tvecs.rows()+ " len "+tvecs.get(0,0).length);
                     break;
                 }
             } catch (Exception e) {
@@ -159,7 +264,7 @@ public class YourService extends KiboRpcService {
                 e.printStackTrace();
             }
         }
-
+        return new AR_result(ids, tvecs);
     }
 
     public double[] parseQRinfo(String QRData)
