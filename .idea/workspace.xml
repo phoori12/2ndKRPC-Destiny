@@ -14,6 +14,7 @@
       <change beforePath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/userPC.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/userPC.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" afterDir="false" />
     </list>
@@ -40,8 +41,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="130" column="9" lean-forward="true" selection-start-line="130" selection-start-column="9" selection-end-line="130" selection-end-column="9" />
+            <state relative-caret-position="1155">
+              <caret line="189" column="54" selection-start-line="189" selection-start-column="54" selection-end-line="189" selection-end-column="54" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#runPlan2#0;class#YourService#0" />
@@ -203,7 +204,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.15511727" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.15511727" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -215,8 +216,8 @@
       <window_info anchor="bottom" id="Logcat" order="1" />
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Terminal" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="4" side_tool="true" />
-      <window_info anchor="bottom" id="Build" order="5" visible="true" weight="0.17551462" />
+      <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.50053304" side_tool="true" weight="0.17551462" />
+      <window_info anchor="bottom" id="Build" order="5" sideWeight="0.49946696" visible="true" weight="0.17551462" />
       <window_info anchor="bottom" id="Android Profiler" order="6" show_stripe_button="false" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
@@ -248,8 +249,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="130" column="9" lean-forward="true" selection-start-line="130" selection-start-column="9" selection-end-line="130" selection-end-column="9" />
+        <state relative-caret-position="1155">
+          <caret line="189" column="54" selection-start-line="189" selection-start-column="54" selection-end-line="189" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#runPlan2#0;class#YourService#0" />
