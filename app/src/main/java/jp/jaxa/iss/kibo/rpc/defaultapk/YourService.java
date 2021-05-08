@@ -92,7 +92,9 @@ public class YourService extends KiboRpcService {
         api.sendDiscoveredQR(QRPointA);
         QRData = parseQRinfo(QRPointA);
         Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
-        AR_scanAndLocalize(false);
+        ////////////////////////// AR PROCESS //////////////////////////
+
+        AR_result targetData = AR_scanAndLocalize(false);
         //moveToWrapper(QRData[1],QRData[2],QRData[3],0,0,-0.707,0.707,0);
 
 
@@ -110,26 +112,59 @@ public class YourService extends KiboRpcService {
         // write here your plan 3
     }
 
-    public void AR_scanAndLocalize(boolean status) {
+    private class AR_result  {
+
+        private Mat AR_ids;
+        private Mat tvecs;
+        private double selected_id;
+
+        public AR_result (Mat ids, Mat _tvecs) {
+            this.AR_ids = ids;
+            this.tvecs = _tvecs;
+            if (AR_ids.rows() == 4) { // get all ar's corner
+                this.selected_id = 0.0; // means we got full package
+            } else if (AR_ids.rows() != 0 && AR_ids.rows() < 4) { // get first ar and let loose
+                this.selected_id = AR_ids.get(0,0)[0];
+            } else {
+                Log.e("AR discover", "Failed To read Array");
+            }
+        }
+
+        public Point targetLocation (Mat _tvecs) {
+            if (selected_id == 0.0) {
+
+            }
+
+
+
+            return new Point(1,2,3);
+        }
+
+
+    }
+
+
+
+
+
+
+    public AR_result AR_scanAndLocalize(boolean status) {
         int row = 0, col = 0;
         double[][] NavCamInst = api.getNavCamIntrinsics();
         Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
         Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
-        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
+//        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
         cameraMatrix.put(row, col, NavCamInst[0]);
         distCoeffs.put(row, col, NavCamInst[1]);
         Log.d("cameraMatrix", cameraMatrix.dump());
         Log.d("distCoeffs", distCoeffs.dump());
 
         Mat ids = new Mat();
+        Mat tvecs = new Mat();
+        Mat rvecs = new Mat();
         List<Mat> corners = new ArrayList<>();
         List<Mat> rej = new ArrayList<>();
         double result = 0.0;
-//        Log.d("AR", "Started undistorting AR");
-
-//        Imgproc.undistort(AR_snap, dst, cameraMatrix, distCoeffs);
-//        Log.d("AR", "Finished undistorting AR");
-
         Log.d("AR", "Started reading AR");
         while (result == 0) {
             AR_snap = api.getMatNavCam();
@@ -145,10 +180,12 @@ public class YourService extends KiboRpcService {
                 Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
                 Aruco.detectMarkers(AR_mat, dictionary, corners, ids, parameters,rej,cameraMatrix,distCoeffs);
                 if (!ids.empty()) {
+                    Aruco.estimatePoseSingleMarkers(corners, 0.05f, cameraMatrix, distCoeffs, rvecs, tvecs);
                     result = ids.get(0, 0)[0];
                     Log.d("AR_IDs", "Result : " + result);
                     Log.d("AR_IDs", ids.dump());
-                    Log.d("AR_IDs", ""+ids.get(0,0).length);
+                    Log.d("AR_IDs", "col "+ids.cols()+" row "+ids.rows());
+                    Log.d("AR_IDs", "col "+tvecs.cols()+" row "+tvecs.rows());
                     break;
                 }
             } catch (Exception e) {
@@ -156,7 +193,7 @@ public class YourService extends KiboRpcService {
                 e.printStackTrace();
             }
         }
-
+        return new AR_result(ids, tvecs);
     }
 
     public double[] parseQRinfo(String QRData)
