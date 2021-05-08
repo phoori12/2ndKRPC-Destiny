@@ -99,6 +99,18 @@ public class YourService extends KiboRpcService {
 
         AR_result targetData = AR_scanAndLocalize(false);
         Point target = targetData.getTargetLocation();
+
+
+        Kinematics astrobee = api.getTrustedRobotKinematics();
+        Point point = astrobee.getPosition();
+        Quaternion IgniteAngle = rotationCalculator(point.getX()-0.057, point.getY(), point.getZ()+0.1111, target.getX(), target.getY(), target.getZ());
+        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
+        moveToWrapper(point.getX()-0.057, point.getY(), point.getZ()+0.1111, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+
+
+        api.laserControl(true);
+        api.takeSnapshot();
+
         //moveToWrapper(QRData[1],QRData[2],QRData[3],0,0,-0.707,0.707,0);
 
 
@@ -161,22 +173,6 @@ public class YourService extends KiboRpcService {
 //                Log.d("AR_RESULTa", "" + _tvecs.get(1,0)[0] + " "+  _tvecs.get(1,0)[1] + " "+ _tvecs.get(1,0)[2]);
 //                Log.d("AR_RESULTa", "" + _tvecs.get(2,0)[0] + " "+  _tvecs.get(2,0)[1] + " "+ _tvecs.get(2,0)[2]);
 //                Log.d("AR_RESULTa", "" + _tvecs.get(3,0)[0] + " "+  _tvecs.get(3,0)[1] + " "+ _tvecs.get(3,0)[2]);
-//                this.AR_ids[(int)ids.get(0,0)[0]] = ids.get(0,0)[0];
-//                this.tvecs[(int)ids.get(0,0)[0]][0] = _tvecs.get(0,0)[0];
-//                this.tvecs[(int)ids.get(0,0)[0]][1] = _tvecs.get(0,0)[1];
-//                this.tvecs[(int)ids.get(0,0)[0]][2] = _tvecs.get(0,0)[2];
-//                this.AR_ids[(int)ids.get(1,0)[0]] = ids.get(1,0)[0];
-//                this.tvecs[(int)ids.get(1,0)[0]][0] = _tvecs.get(1,0)[0];
-//                this.tvecs[(int)ids.get(1,0)[0]][1] = _tvecs.get(1,0)[1];
-//                this.tvecs[(int)ids.get(1,0)[0]][2] = _tvecs.get(1,0)[2];
-//                this.AR_ids[(int)ids.get(2,0)[0]] = ids.get(2,0)[0];
-//                this.tvecs[(int)ids.get(2,0)[0]][0] = _tvecs.get(2,0)[0];
-//                this.tvecs[(int)ids.get(2,0)[0]][1] = _tvecs.get(2,0)[1];
-//                this.tvecs[(int)ids.get(2,0)[0]][2] = _tvecs.get(2,0)[2];
-//                this.AR_ids[(int)ids.get(3,0)[0]] = ids.get(3,0)[0];
-//                this.tvecs[(int)ids.get(3,0)[0]][0] = _tvecs.get(3,0)[0];
-//                this.tvecs[(int)ids.get(3,0)[0]][1] = _tvecs.get(3,0)[1];
-//                this.tvecs[(int)ids.get(3,0)[0]][2] = _tvecs.get(3,0)[2];
                 Log.d("AR_RESULT", "End sort");
                 Log.d("AR_RESULT", Arrays.toString(AR_ids));
                 Log.d("AR_RESULT",  Arrays.toString(tvecs[0]));
@@ -200,15 +196,16 @@ public class YourService extends KiboRpcService {
             double[] result = new double[3];
 
             if (selected_id == 0.0) { // all 4 ar
-                center_w = ((tvecs[0][0] - tvecs[1][0]) + (tvecs[2][0] - tvecs[3][0])) / 2;
-                center_h = ((tvecs[0][1] - tvecs[3][1]) + (tvecs[1][1] - tvecs[3][1])) / 2;
+                center_w = (((tvecs[0][0] + tvecs[1][0]) / 2) + ((tvecs[2][0] + tvecs[3][0]) / 2)) / 2;
+                center_h = (((tvecs[0][1] + tvecs[3][1]) / 2) + ((tvecs[1][1] + tvecs[2][1]) / 2)) / 2;
                 depth_y = (tvecs[0][2] + tvecs[1][2] + tvecs[2][2] + tvecs[3][2]) / 4;
             }
+            Log.d("calculateDat", "W: "+ center_w + " H: "+ center_h + " depth: " + depth_y);
             Kinematics astrobee = api.getTrustedRobotKinematics();
             Point _point = astrobee.getPosition();
-            result[0] = center_w - _point.getX();
-            result[1] = -depth_y + _point.getY();
-            result[2] = -center_h + _point.getZ();
+            result[0] = _point.getX() - center_w;
+            result[1] = _point.getY() - depth_y;
+            result[2] = _point.getZ() + center_h;
             Log.d("TargetPos", "X: "+ result[0] + " Y: "+ result[1] + " Z: " + result[2]);
 
             return new Point(result[0],result[1],result[2]);
