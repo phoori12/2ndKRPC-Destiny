@@ -110,9 +110,11 @@ public class YourService extends KiboRpcService {
 
         api.laserControl(true);
         api.takeSnapshot();
+        api.laserControl(false);
 
-        //moveToWrapper(QRData[1],QRData[2],QRData[3],0,0,-0.707,0.707,0);
 
+        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
+        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
 
         api.reportMissionCompletion();
 
