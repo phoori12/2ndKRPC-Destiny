@@ -103,9 +103,9 @@ public class YourService extends KiboRpcService {
 
         Kinematics astrobee = api.getTrustedRobotKinematics();
         Point point = astrobee.getPosition();
-        Quaternion IgniteAngle = rotationCalculator(point.getX()-0.057, point.getY(), point.getZ()+0.1111, target.getX(), -10.4, target.getZ());
+        Quaternion IgniteAngle = rotationCalculator(point.getX(), point.getY(), point.getZ()+0.1111, target.getX(), -10.25, target.getZ());
         Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-        moveToWrapper(point.getX()-0.057, point.getY(), point.getZ()+0.1111, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+        moveToWrapper(point.getX(), point.getY(), point.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 
 
         api.laserControl(true);
