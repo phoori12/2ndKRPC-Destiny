@@ -48,6 +48,7 @@ public class YourService extends KiboRpcService {
 
     Mat QR_snap;
     Mat AR_snap;
+    double ncOffset_y = 0.042 ,ncOffset_z  = 0.083;
 
     @Override
     protected void runPlan1(){
@@ -58,7 +59,7 @@ public class YourService extends KiboRpcService {
         int try_read = 0;
         int AR_cast = 0;
         int sleep_time = 3;
-        double ncOffset_y = 0.042 ,ncOffset_z  = 0.083;
+
 
         // Mission Start //
         api.startMission();
@@ -102,11 +103,11 @@ public class YourService extends KiboRpcService {
         Point target = targetData.getTargetLocation();
 
 
-        Kinematics astrobee = api.getTrustedRobotKinematics();
-        Point point = astrobee.getPosition();
-        Quaternion IgniteAngle = rotationCalculator(point.getX(), point.getY(), point.getZ()+0.1111, target.getX(), -10.25, target.getZ());
+//        Kinematics astrobee = api.getTrustedRobotKinematics();
+//        Point point = astrobee.getPosition();
+        Quaternion IgniteAngle = rotationCalculator(11.21+ncOffset_y,-9.6,4.79+ncOffset_z+0.1111, target.getX(), -10.25, target.getZ());
         Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-        moveToWrapper(point.getX(), point.getY(), point.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+        moveToWrapper(11.21+ncOffset_y,-9.6,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 
 
         api.laserControl(true);
@@ -204,8 +205,9 @@ public class YourService extends KiboRpcService {
                 depth_y = (tvecs[0][2] + tvecs[1][2] + tvecs[2][2] + tvecs[3][2]) / 4;
             }
             Log.d("calculateDat", "W: "+ center_w + " H: "+ center_h + " depth: " + depth_y);
-            Kinematics astrobee = api.getTrustedRobotKinematics();
-            Point _point = astrobee.getPosition();
+            //Kinematics astrobee = api.getTrustedRobotKinematics();
+            //Point _point = astrobee.getPosition();
+            Point _point = new Point(11.21+ncOffset_y,-9.6,4.79+ncOffset_z);
             result[0] = _point.getX() + center_w;
             result[1] = _point.getY() - depth_y;
             result[2] = _point.getZ() + center_h;
