@@ -76,7 +76,7 @@ public class YourService extends KiboRpcService {
             QR_snap = api.getMatNavCam();
 
             Bitmap QR_Bitmap = null;
-            Mat QR_mat = imProveImaging(QR_snap, false, true);
+            Mat QR_mat = imProveImaging(QR_snap, false, 1);
             Log.d("IMGPROC", "Bitmap conversion started");
             try {
                 QR_Bitmap = Bitmap.createBitmap(QR_mat.cols(), QR_mat.rows(), Bitmap.Config.ARGB_8888);
@@ -237,7 +237,7 @@ public class YourService extends KiboRpcService {
         Log.d("AR", "Started reading AR");
         while (result == 0) {
             AR_snap = api.getMatNavCam();
-            Mat AR_mat = imProveImaging(AR_snap, false, false);
+            Mat AR_mat = imProveImaging(AR_snap, false, 2);
             try {
                 DetectorParameters parameters = DetectorParameters.create();
 //                parameters.set_errorCorrectionRate(1);
@@ -311,7 +311,7 @@ public class YourService extends KiboRpcService {
     }
 
 
-    public  Mat imProveImaging(Mat source, boolean undistort_state , boolean QR_mode) {
+    public  Mat imProveImaging(Mat source, boolean undistort_state , int read_mode) { // 1 qr 2 ar 3 etc
         int row = 0, col = 0;
         double[][] NavCamInst = api.getNavCamIntrinsics();
         Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
@@ -341,17 +341,22 @@ public class YourService extends KiboRpcService {
         Imgproc.findContours(Thres, contours, new Mat(), Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
 
         // QR Mode variable //
-        Rect QR_boundingBox = new Rect();
+        Rect boundingBox = new Rect();
 
         for(int i=0; i< contours.size();i++)
         {
             if ((Imgproc.contourArea(contours.get(i)) >7000))//Imgproc.contourArea(contours.get(i)) > 50
             {
-                if (QR_mode) {
-                    QR_boundingBox = Imgproc.boundingRect(contours.get(i));
-                    if (QR_boundingBox.height > QR_boundingBox.width) {
+                boundingBox = Imgproc.boundingRect(contours.get(i));
+                if (read_mode == 1) {
+                    if (boundingBox.height > boundingBox.width) {
                         Wanted_contours.add(contours.get(i));
                        // System.out.println(contours.get(i).dump());
+                    }
+                } else if (read_mode == 2) {
+                    if (boundingBox.height < boundingBox.width) {
+                        Wanted_contours.add(contours.get(i));
+                        // System.out.println(contours.get(i).dump());
                     }
                 } else {
                     Wanted_contours.add(contours.get(i));
@@ -367,8 +372,8 @@ public class YourService extends KiboRpcService {
         Imgproc.fillPoly(mask , Wanted_contours, new Scalar(255, 255, 255));
         Core.bitwise_and(dst,mask,result);
         Log.d("IMGPROC", "Filling process finished");
-        if (QR_mode) {
-            return result.submat(QR_boundingBox.y, QR_boundingBox.y + QR_boundingBox.height, QR_boundingBox.x, QR_boundingBox.x + QR_boundingBox.width);
+        if (read_mode == 1) {
+            return result.submat(boundingBox.y, boundingBox.y + boundingBox.height, boundingBox.x, boundingBox.x + boundingBox.width);
         } else {
             return result;
         }
