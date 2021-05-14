@@ -8,6 +8,7 @@ import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.util.Log;
 
 import net.sourceforge.zbar.Config;
@@ -22,6 +23,7 @@ import org.opencv.core.CvException;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -47,6 +49,7 @@ public class YourService extends KiboRpcService {
 
     Mat QR_snap;
     Mat AR_snap;
+    double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
 
     @Override
     protected void runPlan1(){
@@ -57,13 +60,13 @@ public class YourService extends KiboRpcService {
         int try_read = 0;
         int AR_cast = 0;
         int sleep_time = 3;
-        double ncOffset_y = 0.042 ,ncOffset_z  = 0.083;
+
 
         // Mission Start //
         api.startMission();
 
         //moveToWrapper(10.5,-9.8,4.6,0,0,-0.707,0.707,0);
-        moveToWrapper(11.21+ncOffset_y,-9.6,4.79+ncOffset_z,0,0,-0.707,0.707,5);
+        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z,0,0,-0.707,0.707,5);
         try {
             sleep(sleep_time);
         } catch (Exception e) {
@@ -75,7 +78,7 @@ public class YourService extends KiboRpcService {
             QR_snap = api.getMatNavCam();
 
             Bitmap QR_Bitmap = null;
-            Mat QR_mat = imProveImaging(QR_snap, false);
+            Mat QR_mat = imProveImaging(QR_snap, false, 1);
             Log.d("IMGPROC", "Bitmap conversion started");
             try {
                 QR_Bitmap = Bitmap.createBitmap(QR_mat.cols(), QR_mat.rows(), Bitmap.Config.ARGB_8888);
@@ -93,19 +96,19 @@ public class YourService extends KiboRpcService {
         }
         Log.d("QR", QRPointA);
         api.sendDiscoveredQR(QRPointA);
-        QRData = parseQRinfo(QRPointA);
-        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
+//        QRData = parseQRinfo(QRPointA);
+//        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
         ////////////////////////// AR PROCESS //////////////////////////
 
         AR_result targetData = AR_scanAndLocalize(false);
         Point target = targetData.getTargetLocation();
 
 
-        Kinematics astrobee = api.getTrustedRobotKinematics();
-        Point point = astrobee.getPosition();
-        Quaternion IgniteAngle = rotationCalculator(point.getX(), point.getY(), point.getZ()+0.1111, target.getX(), -10.25, target.getZ());
+//        Kinematics astrobee = api.getTrustedRobotKinematics();
+//        Point point = astrobee.getPosition();
+        Quaternion IgniteAngle = rotationCalculator(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, target.getX()-0.057+0.035, target.getY()+0.1302, target.getZ()+0.2111);
         Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-        moveToWrapper(point.getX(), point.getY(), point.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 
 
         api.laserControl(true);
@@ -203,8 +206,9 @@ public class YourService extends KiboRpcService {
                 depth_y = (tvecs[0][2] + tvecs[1][2] + tvecs[2][2] + tvecs[3][2]) / 4;
             }
             Log.d("calculateDat", "W: "+ center_w + " H: "+ center_h + " depth: " + depth_y);
-            Kinematics astrobee = api.getTrustedRobotKinematics();
-            Point _point = astrobee.getPosition();
+            //Kinematics astrobee = api.getTrustedRobotKinematics();
+            //Point _point = astrobee.getPosition();
+            Point _point = new Point(11.21,-9.6,4.79);
             result[0] = _point.getX() + center_w;
             result[1] = _point.getY() - depth_y;
             result[2] = _point.getZ() + center_h;
@@ -216,12 +220,8 @@ public class YourService extends KiboRpcService {
 
     }
 
-
-
-
-
-
     public AR_result AR_scanAndLocalize(boolean status) {
+        long start_time = SystemClock.elapsedRealtime();
         int row = 0, col = 0;
         double[][] NavCamInst = api.getNavCamIntrinsics();
         Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
@@ -241,7 +241,7 @@ public class YourService extends KiboRpcService {
         Log.d("AR", "Started reading AR");
         while (result == 0) {
             AR_snap = api.getMatNavCam();
-            Mat AR_mat = imProveImaging(AR_snap, false);
+            Mat AR_mat = imProveImaging(AR_snap, false, 2);
             try {
                 DetectorParameters parameters = DetectorParameters.create();
 //                parameters.set_errorCorrectionRate(1);
@@ -266,6 +266,8 @@ public class YourService extends KiboRpcService {
                 e.printStackTrace();
             }
         }
+        long stop_time = SystemClock.elapsedRealtime();
+        Log.d("AR_TIME:"," "+ (stop_time-start_time)/1000);
         return new AR_result(ids, tvecs);
     }
 
@@ -288,6 +290,7 @@ public class YourService extends KiboRpcService {
 
     public String QRscaner(Bitmap source) // removed static //
     {
+        long start_time = SystemClock.elapsedRealtime();
         String result = null;
 
         int[] pixel = new int[source.getWidth()*source.getHeight()];
@@ -311,11 +314,14 @@ public class YourService extends KiboRpcService {
         {
             Log.d("QR discover: ","Not detected");
         }
+        long stop_time = SystemClock.elapsedRealtime();
+        Log.d("QR_TIME:"," "+ (stop_time-start_time)/1000);
         return result;
     }
 
 
-    public  Mat imProveImaging(Mat source, boolean undistort_state) {
+    public  Mat imProveImaging(Mat source, boolean undistort_state , int read_mode) { // 1 qr 2 ar 3 etc
+        long start_time = SystemClock.elapsedRealtime();
         int row = 0, col = 0;
         double[][] NavCamInst = api.getNavCamIntrinsics();
         Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
@@ -343,12 +349,30 @@ public class YourService extends KiboRpcService {
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         List<MatOfPoint> Wanted_contours = new ArrayList<MatOfPoint>();
         Imgproc.findContours(Thres, contours, new Mat(), Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+
+        // QR Mode variable //
+        Rect boundingBox = new Rect();
+
         for(int i=0; i< contours.size();i++)
         {
             if ((Imgproc.contourArea(contours.get(i)) >7000))//Imgproc.contourArea(contours.get(i)) > 50
             {
-                Wanted_contours.add(contours.get(i));
-                System.out.println(contours.get(i).dump());
+                boundingBox = Imgproc.boundingRect(contours.get(i));
+                if (read_mode == 1) {
+                    if (boundingBox.height > boundingBox.width) {
+                        Wanted_contours.add(contours.get(i));
+                       // System.out.println(contours.get(i).dump());
+                    }
+                } else if (read_mode == 2) {
+                    if (boundingBox.height < boundingBox.width) {
+                        Wanted_contours.add(contours.get(i));
+                        // System.out.println(contours.get(i).dump());
+                    }
+                } else {
+                    Wanted_contours.add(contours.get(i));
+                    //System.out.println(contours.get(i).dump());
+                }
+
             }
         }
         Log.d("IMGPROC", "Contour location process finished");
@@ -359,7 +383,14 @@ public class YourService extends KiboRpcService {
         Core.bitwise_and(dst,mask,result);
         Log.d("IMGPROC", "Filling process finished");
 
-        return result;
+        long stop_time = SystemClock.elapsedRealtime();
+        Log.d("IMGPROC_TIME:"," "+ (stop_time-start_time)/1000);
+        if (read_mode == 1) {
+            return result.submat(boundingBox.y, boundingBox.y + boundingBox.height, boundingBox.x, boundingBox.x + boundingBox.width);
+        } else {
+            return result;
+        }
+
     }
 
 
