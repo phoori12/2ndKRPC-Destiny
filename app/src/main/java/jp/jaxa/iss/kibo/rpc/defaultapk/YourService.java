@@ -50,7 +50,7 @@ public class YourService extends KiboRpcService {
     Mat QR_snap;
     Mat AR_snap;
     double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
-
+    // first commit from vm
     @Override
     protected void runPlan1(){
 

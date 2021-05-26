@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.android.gms:play-services-clearcut:15.0.1@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/6064345c72af1186afb74de995e44038b152b8d1/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/6064345c72af1186afb74de995e44038b152b8d1/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/0c4b81a705d608c68d224d990df2d74f78a70c1d/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/0c4b81a705d608c68d224d990df2d74f78a70c1d/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
