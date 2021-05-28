@@ -3,12 +3,48 @@
 
     <item
         is-multidex="true"
+        jar="C:\Users\userPC\.android\build-cache\08c575ce789404735e7c04772f5516c3a2497fa1\output\jars\libs\ff_msgs-0.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="51d67762d9e1fd4a5e9c715bbfbced78658dddb6">
+        <dex dex="C:\Users\userPC\Desktop\SRPC2021\2ndKRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\ff_msgs-0.0.0_0c9aef052a4021425ca341aa7a1731aa3e50e8b5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\userPC\.android\build-cache\4a1053ad521099c6da64eef415a3f6050c3b1ba5\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="1da33e32ab8494d557dfb2f3c3f8e29fdc5d98b7">
+        <dex dex="C:\Users\userPC\Desktop\SRPC2021\2ndKRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_044d2f9879f675b2deeb94c230f4a44de49fded7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Users\userPC\.android\build-cache\812c3cbff632763ed0c300e17e59a14122f0823d\output\jars\classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
         sha1="1da33e32ab8494d557dfb2f3c3f8e29fdc5d98b7">
         <dex dex="C:\Users\userPC\Desktop\SRPC2021\APK_A1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4d88e7127a048575dd6d422a77a4a81e92c3bac9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\userPC\.android\build-cache\08c575ce789404735e7c04772f5516c3a2497fa1\output\jars\libs\api-1.0-SNAPSHOT.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d0c375d9be8682ad66b1dcc36f23e7042ebab943">
+        <dex dex="C:\Users\userPC\Desktop\SRPC2021\2ndKRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\api-1.0-SNAPSHOT_41b19602cd51e371525a764c3d180ee98351bd61\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\userPC\.android\build-cache\08c575ce789404735e7c04772f5516c3a2497fa1\output\jars\libs\ros-1.0-SNAPSHOT.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="a572c1afbdb69a1fa3f641c662eade8ed245bc2c">
+        <dex dex="C:\Users\userPC\Desktop\SRPC2021\2ndKRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\ros-1.0-SNAPSHOT_1804cc6dbd1a8a472ae94a3a9bb2833785fa201d\classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -30,21 +66,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\userPC\.android\build-cache\af5f452530ca7686ef7b6684ad4ab7f3ffedc50b\output\jars\libs\ros-1.0-SNAPSHOT.jar"
+        jar="C:\Users\userPC\.android\build-cache\08c575ce789404735e7c04772f5516c3a2497fa1\output\jars\classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
-        sha1="a572c1afbdb69a1fa3f641c662eade8ed245bc2c">
-        <dex dex="C:\Users\userPC\Desktop\SRPC2021\KRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\ros-1.0-SNAPSHOT_d1b21c070638c3435ba2108f413ff5d155dec27d\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\userPC\.android\build-cache\af5f452530ca7686ef7b6684ad4ab7f3ffedc50b\output\jars\libs\api-1.0-SNAPSHOT.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="d0c375d9be8682ad66b1dcc36f23e7042ebab943">
-        <dex dex="C:\Users\userPC\Desktop\SRPC2021\KRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\api-1.0-SNAPSHOT_9a368022e3ec69db9b4c8b37b5d558b027c71127\classes.dex" />
+        sha1="72fd8dff2fe2354cfaca363f3963f3d67fd1febe">
+        <dex dex="C:\Users\userPC\Desktop\SRPC2021\2ndKRPC-Destiny\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4cf828d32a1a8d31cfb95bbf52ec55c8061b9ab5\classes.dex" />
     </item>
     <item
         is-multidex="true"
