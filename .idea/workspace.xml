@@ -9,7 +9,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" line="479" mnemonic="0" />
+    <bookmark url="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java" line="500" mnemonic="0" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0900d552-2724-408a-a688-3a1b4cfeef08" name="Default Changelist" comment="">
@@ -38,20 +38,18 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="545">
-              <caret line="234" column="8" selection-start-line="234" selection-start-column="8" selection-end-line="234" selection-end-column="8" />
+            <state relative-caret-position="488">
+              <caret line="301" column="43" selection-start-line="301" selection-start-column="43" selection-end-line="301" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#runPlan2#0;class#YourService#0" />
                 <element signature="method#runPlan3#0;class#YourService#0" />
-                <element signature="e#4429#4488#0" />
                 <element signature="method#parseQRinfo#0;class#YourService#0" />
                 <element signature="method#sleep#0;class#YourService#0" />
                 <element signature="e#6861#7874#0" />
                 <element signature="method#QRscaner#0;class#YourService#0" />
                 <element signature="e#8968#10873#0" />
                 <element signature="method#moveToWrapper#0;class#YourService#0" />
-                <element signature="e#11543#12717#0" />
               </folding>
             </state>
           </provider>
@@ -67,6 +65,11 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>System.out.print</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -292,20 +295,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/jp/jaxa/iss/kibo/rpc/defaultapk/YourService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="545">
-          <caret line="234" column="8" selection-start-line="234" selection-start-column="8" selection-end-line="234" selection-end-column="8" />
+        <state relative-caret-position="488">
+          <caret line="301" column="43" selection-start-line="301" selection-start-column="43" selection-end-line="301" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#runPlan2#0;class#YourService#0" />
             <element signature="method#runPlan3#0;class#YourService#0" />
-            <element signature="e#4429#4488#0" />
             <element signature="method#parseQRinfo#0;class#YourService#0" />
             <element signature="method#sleep#0;class#YourService#0" />
             <element signature="e#6861#7874#0" />
             <element signature="method#QRscaner#0;class#YourService#0" />
             <element signature="e#8968#10873#0" />
             <element signature="method#moveToWrapper#0;class#YourService#0" />
-            <element signature="e#11543#12717#0" />
           </folding>
         </state>
       </provider>

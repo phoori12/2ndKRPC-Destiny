@@ -88,7 +88,8 @@ public class YourService extends KiboRpcService {
 //        QRData = parseQRinfo(QRPointA);
 //        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
 
-
+        ARProcessing ARbee = new ARProcessing(airlock_snap);
+        Point target = ARbee.getTargetPosition();
         ////////////////////////// AR PROCESS //////////////////////////
 
 //        AR_result targetData = AR_scanAndLocalize(false);
@@ -97,22 +98,23 @@ public class YourService extends KiboRpcService {
 //
 ////        Kinematics astrobee = api.getTrustedRobotKinematics();
 ////        Point point = astrobee.getPosition();
-//        Quaternion IgniteAngle = rotationCalculator(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, target.getX()-0.057+0.035, target.getY()+0.1302, target.getZ()+0.2111);
-//        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-//        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
-//
-//
-//        api.laserControl(true);
-//        api.takeSnapshot();
-//        api.laserControl(false);
-//
-//
-//        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
-//        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
-//
-//
-//
-//        api.reportMissionCompletion();
+        myMathmanager celes = new myMathmanager();
+        Quaternion IgniteAngle = celes.rotationCalculator(11.21,-9.6,4.79, target.getX(), target.getY(), target.getZ());
+        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
+        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+
+
+        api.laserControl(true);
+        api.takeSnapshot();
+        api.laserControl(false);
+
+
+        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
+        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
+
+
+
+        api.reportMissionCompletion();
 
     }
 
@@ -128,12 +130,8 @@ public class YourService extends KiboRpcService {
 
     class ARProcessing {
 
-        private int dictID = Aruco.DICT_5X5_250;
         private Mat ids;
         private ArrayList<Mat> corners;
-        private Dictionary dict;
-        private Scalar borderColor;
-        private float markerSize;
         private Mat rvecs;
         private Mat tvecs;
         private Mat image;
@@ -157,7 +155,40 @@ public class YourService extends KiboRpcService {
             demon = new myMathmanager();
         }
 
+        private void ARDetect() {
+            long start_time = SystemClock.elapsedRealtime();
+            corners = new ArrayList<>();
+            ids = new Mat();
+
+            List<Mat> rej = new ArrayList<>();
+            double result = 0.0;
+            Log.d("AR", "Started reading AR");
+            while (result == 0) {
+                image = api.getMatNavCam();
+                try {
+                    DetectorParameters parameters = DetectorParameters.create();
+                    Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
+                    Aruco.detectMarkers(image, dictionary, corners, ids, parameters,rej,cameraMatrix,distCoeffs);
+                    if (!ids.empty()) {
+                        Aruco.estimatePoseSingleMarkers(corners, 0.05f, cameraMatrix, distCoeffs, rvecs, tvecs);
+                        result = ids.get(0, 0)[0];
+                        Log.d("AR_IDs", "Result : " + result);
+                        Log.d("AR_IDs", ids.dump());
+                        Log.d("AR_IDs", "col "+ids.cols()+" row "+ids.rows());
+                        Log.d("AR_IDs", "col "+tvecs.cols()+" row "+tvecs.rows()+ " len "+tvecs.get(0,0).length);
+                        break;
+                    }
+                } catch (Exception e) {
+                    Log.d("AR discover:", "Not detected");
+                    e.printStackTrace();
+                }
+            }
+            long stop_time = SystemClock.elapsedRealtime();
+            Log.d("AR_TIME:"," "+ (stop_time-start_time)/1000);
+        }
+
         private int[] getTrustedTargetPlane() {
+            this.ARDetect();
             if (tvecs == null || rvecs == null) {
                 Log.d("ARProcessing","Either tvecs or rvecs is null");
                 return new int[] {0,0};
@@ -232,7 +263,9 @@ public class YourService extends KiboRpcService {
 
         }
 
-        public double[] getTargetPosition(int[] AR_Ids) {
+        public Point getTargetPosition() {
+            int[] AR_Ids = this.getTrustedTargetPlane();
+            if (AR_Ids == null) return null;
             if (AR_Ids.length == 4) {
                 // calculate all average and return // do later
             }
@@ -262,68 +295,20 @@ public class YourService extends KiboRpcService {
             pos[1] = 0;
             pos[2] = pos[2] - 0.1111;
             // Robot frame to Global Frame //
-            pos[0] = pos[0] + 11.247;
-            pos[1] = 0.1302 - ARTranslation.get(AR_Ids[0]).get(0, 2)[0] - 9.483; // inverse transform
-            pos[2] = pos[2] + 4.868;
+            Kinematics astrobee = api.getTrustedRobotKinematics();
+            Point point = astrobee.getPosition();
+            pos[0] = pos[0] + point.getX();
+            pos[1] = 0.1302 - ARTranslation.get(AR_Ids[0]).get(0, 2)[0] + point.getY(); // inverse transform
+            pos[2] = pos[2] + point.getZ();
             Log.d("ARProcessing",Arrays.toString(pos));
             //System.out.println(demon.rotationCalculator(11.247, -9.483, 4.868, pos[0], pos[1], pos[2]));
-            return pos;
+            return new Point(pos[0], pos[1], pos[2]);
         }
     }
 
-//    public AR_result AR_scanAndLocalize(boolean status) {
-//        long start_time = SystemClock.elapsedRealtime();
-//        int row = 0, col = 0;
-//        double[][] NavCamInst = api.getNavCamIntrinsics();
-//        Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
-//        Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
-////        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
-//        cameraMatrix.put(row, col, NavCamInst[0]);
-//        distCoeffs.put(row, col, NavCamInst[1]);
-//        Log.d("cameraMatrix", cameraMatrix.dump());
-//        Log.d("distCoeffs", distCoeffs.dump());
-//
-//        Mat ids = new Mat();
-//        Mat tvecs = new Mat();
-//        Mat rvecs = new Mat();
-//        List<Mat> corners = new ArrayList<>();
-//        List<Mat> rej = new ArrayList<>();
-//        double result = 0.0;
-//        Log.d("AR", "Started reading AR");
-//        while (result == 0) {
-//            AR_snap = api.getMatNavCam();
-//            //Mat AR_mat = imProveImaging(AR_snap, false, 2);
-//            try {
-//                DetectorParameters parameters = DetectorParameters.create();
-////                parameters.set_errorCorrectionRate(1);
-//                if (status) {
-//                    parameters.set_adaptiveThreshWinSizeMin(5);
-//                    parameters.set_adaptiveThreshWinSizeMax(29);
-//                    parameters.set_adaptiveThreshWinSizeStep(4);
-//                }
-//                Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
-//                Aruco.detectMarkers(AR_snap, dictionary, corners, ids, parameters,rej,cameraMatrix,distCoeffs);
-//                if (!ids.empty()) {
-//                    Aruco.estimatePoseSingleMarkers(corners, 0.05f, cameraMatrix, distCoeffs, rvecs, tvecs);
-//                    result = ids.get(0, 0)[0];
-//                    Log.d("AR_IDs", "Result : " + result);
-//                    Log.d("AR_IDs", ids.dump());
-//                    Log.d("AR_IDs", "col "+ids.cols()+" row "+ids.rows());
-//                    Log.d("AR_IDs", "col "+tvecs.cols()+" row "+tvecs.rows()+ " len "+tvecs.get(0,0).length);
-//                    break;
-//                }
-//            } catch (Exception e) {
-//                Log.d("AR discover:", "Not detected");
-//                e.printStackTrace();
-//            }
-//        }
-//        long stop_time = SystemClock.elapsedRealtime();
-//        Log.d("AR_TIME:"," "+ (stop_time-start_time)/1000);
-//        return new AR_result(ids, tvecs);
-//    }
+
 
     class myMathmanager {
-
 
         public Quaternion rotMatToQuaternions(Mat rot) {
             float qua_x = 0,qua_y = 0,qua_z = 0,qua_w = 0;
@@ -615,41 +600,6 @@ public class YourService extends KiboRpcService {
         }
     }
 
-
-    private Quaternion rotationCalculator(double x, double y, double z, double xp, double yp,double zp)
-    {
-
-
-        double x_sub,y_sub,z_sub,x_deg,z_deg;
-        x_sub  = xp-x; // + is right // - is left
-        y_sub = Math.abs(yp-y); // always absolute
-
-        double bftan = x_sub/y_sub;
-        z_deg = Math.toDegrees(Math.atan(bftan));
-        double z_deg_final = z_deg - 90;
-
-        z_sub = zp-z; // + is down // - is up
-        bftan = z_sub/y_sub;
-        x_deg = -Math.toDegrees(Math.atan(bftan));
-
-        z_deg = Math.toRadians(z_deg_final);
-        x_deg = Math.toRadians(x_deg);
-        double cy = Math.cos(z_deg * 0.5);
-        double sy = Math.sin(z_deg * 0.5);
-        double cp = Math.cos(0 * 0.5);
-        double sp = Math.sin(0 * 0.5);
-        double cr = Math.cos(x_deg * 0.5);
-        double sr = Math.sin(x_deg * 0.5);
-
-        double qua_w = cr * cp * cy + sr * sp * sy;
-        double qua_x = sr * cp * cy - cr * sp * sy;
-        double qua_y = -(cr * sp * cy + sr * cp * sy);
-        double qua_z = cr * cp * sy - sr * sp * cy;
-        Quaternion q = new Quaternion((float)qua_x,(float)qua_y,(float)qua_z,(float)qua_w);
-
-
-        return q;
-    }
 
 }
 
