@@ -3,9 +3,12 @@ package jp.jaxa.iss.kibo.rpc.defaultapk;
 import gov.nasa.arc.astrobee.Kinematics;
 import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 
+import jp.jaxa.iss.kibo.rpc.api.types.PointCloud;
+
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
+import sensor_msgs.PointCloud2;
 
 import android.graphics.Bitmap;
 import android.os.SystemClock;
@@ -47,20 +50,26 @@ import org.opencv.aruco.Dictionary;
 
 public class YourService extends KiboRpcService {
 
-    Mat QR_snap;
-    Mat AR_snap;
+    Mat airlock_snap; // will be initialize upon reading QR
     double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
+    Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
+    Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
 
     @Override
     protected void runPlan1(){
 
         String QRPointA = null;
-        double QRData[]; // KOZ Pattern // A'X // A'Y // A'Z
         int max_try = 4;
         int try_read = 0;
         int AR_cast = 0;
         int sleep_time = 3;
 
+        // Initialize camera intrinsic values //
+        double[][] NavCamInst = api.getNavCamIntrinsics();
+        cameraMatrix.put(0, 0, NavCamInst[0]);
+        distCoeffs.put(0, 0, NavCamInst[1]);
+        Log.d("cameraMatrix", cameraMatrix.dump());
+        Log.d("distCoeffs", distCoeffs.dump());
 
         // Mission Start //
         api.startMission();
@@ -72,54 +81,37 @@ public class YourService extends KiboRpcService {
         } catch (Exception e) {
             Log.d("Sleep status", "sleep failed");
         }
-        /////////////////////////////////////////////////////////////////////////////
-
-        while(QRPointA == null && try_read < max_try) {
-            QR_snap = api.getMatNavCam();
-
-            Bitmap QR_Bitmap = null;
-            Mat QR_mat = imProveImaging(QR_snap, false, 1);
-            Log.d("IMGPROC", "Bitmap conversion started");
-            try {
-                QR_Bitmap = Bitmap.createBitmap(QR_mat.cols(), QR_mat.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(QR_mat, QR_Bitmap);
-                Log.d("IMGPROC", "Bitmap conversion finished");
-                QRPointA = QRscaner(QR_Bitmap);
-            }
-            catch (CvException e){Log.d("Exception",e.getMessage());}
-
-
-           // Bitmap QR_crop = Bitmap.createBitmap(QR_snap,0,0,960,960);
-
-            try_read++;
-            //////////////////////////////////////////////////////////////////////////////////////
-        }
-        Log.d("QR", QRPointA);
+        QRPointA = QR_method(max_try);
         api.sendDiscoveredQR(QRPointA);
+        
 //        QRData = parseQRinfo(QRPointA);
 //        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
+
+
         ////////////////////////// AR PROCESS //////////////////////////
 
-        AR_result targetData = AR_scanAndLocalize(false);
-        Point target = targetData.getTargetLocation();
-
-
-//        Kinematics astrobee = api.getTrustedRobotKinematics();
-//        Point point = astrobee.getPosition();
-        Quaternion IgniteAngle = rotationCalculator(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, target.getX()-0.057+0.035, target.getY()+0.1302, target.getZ()+0.2111);
-        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
-
-
-        api.laserControl(true);
-        api.takeSnapshot();
-        api.laserControl(false);
-
-
-        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
-        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
-
-        api.reportMissionCompletion();
+//        AR_result targetData = AR_scanAndLocalize(false);
+//        Point target = targetData.getTargetLocation();
+//
+//
+////        Kinematics astrobee = api.getTrustedRobotKinematics();
+////        Point point = astrobee.getPosition();
+//        Quaternion IgniteAngle = rotationCalculator(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, target.getX()-0.057+0.035, target.getY()+0.1302, target.getZ()+0.2111);
+//        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
+//        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+//
+//
+//        api.laserControl(true);
+//        api.takeSnapshot();
+//        api.laserControl(false);
+//
+//
+//        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
+//        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
+//
+//
+//
+//        api.reportMissionCompletion();
 
     }
 
@@ -133,145 +125,60 @@ public class YourService extends KiboRpcService {
         // write here your plan 3
     }
 
-    class AR_result  {
-
-        private double[] AR_ids = new double[4];
-        private double[][] tvecs = new double[4][3];
-        private double selected_id;
-
-        public AR_result (Mat ids, Mat _tvecs) {
-            Log.d("AR_RESULT", "Class called");
-            Log.d("AR_RESULT", ids.dump());
-            Log.d("AR_RESULT", ""+ids.rows());
-//            this.AR_ids = ids;_
-//            this.tvecs = _tvecs;
-            if (ids.rows() == 4) { // get all ar's corner
-                this.selected_id = 0.0; // means we got full package
-                ///////// sorting ////////
-                Log.d("AR_RESULT", "Start sort");
-                for (int i = 0;i < 4;i++) {
-                    Log.d("AR_RESULT", "sorting "+(int)(ids.get(i,0)[0]));
-                    if ((int)(ids.get(i,0)[0]) == 1) {
-                        this.AR_ids[0] = ids.get(i,0)[0];
-                        this.tvecs[0][0] = _tvecs.get(i,0)[0];
-                        this.tvecs[0][1] = _tvecs.get(i,0)[1];
-                        this.tvecs[0][2] = _tvecs.get(i,0)[2];
-                    } else if ((int)(ids.get(i,0)[0]) == 2) {
-                        this.AR_ids[1] = ids.get(i,0)[0];
-                        this.tvecs[1][0] = _tvecs.get(i,0)[0];
-                        this.tvecs[1][1] = _tvecs.get(i,0)[1];
-                        this.tvecs[1][2] = _tvecs.get(i,0)[2];
-                    } else if ((int)(ids.get(i,0)[0]) == 3) {
-                        this.AR_ids[2] = ids.get(i,0)[0];
-                        this.tvecs[2][0] = _tvecs.get(i,0)[0];
-                        this.tvecs[2][1] = _tvecs.get(i,0)[1];
-                        this.tvecs[2][2] = _tvecs.get(i,0)[2];
-                    }else if ((int)(ids.get(i,0)[0]) == 4) {
-                        this.AR_ids[3] = ids.get(i,0)[0];
-                        this.tvecs[3][0] = _tvecs.get(i,0)[0];
-                        this.tvecs[3][1] = _tvecs.get(i,0)[1];
-                        this.tvecs[3][2] = _tvecs.get(i,0)[2];
-                    }
-                }
-//                Log.d("AR_RESULTa", "" + ids.get(0,0)[0] + " "+ ids.get(1,0)[0] + " "+ ids.get(2,0)[0] + " "+ ids.get(3,0)[0] + " ");
-//                Log.d("AR_RESULTa", "" + _tvecs.get(0,0)[0] + " "+  _tvecs.get(0,0)[1] + " "+ _tvecs.get(0,0)[2]);
-//                Log.d("AR_RESULTa", "" + _tvecs.get(1,0)[0] + " "+  _tvecs.get(1,0)[1] + " "+ _tvecs.get(1,0)[2]);
-//                Log.d("AR_RESULTa", "" + _tvecs.get(2,0)[0] + " "+  _tvecs.get(2,0)[1] + " "+ _tvecs.get(2,0)[2]);
-//                Log.d("AR_RESULTa", "" + _tvecs.get(3,0)[0] + " "+  _tvecs.get(3,0)[1] + " "+ _tvecs.get(3,0)[2]);
-                Log.d("AR_RESULT", "End sort");
-                Log.d("AR_RESULT", Arrays.toString(AR_ids));
-                Log.d("AR_RESULT",  Arrays.toString(tvecs[0]));
-                Log.d("AR_RESULT",  Arrays.toString(tvecs[1]));
-                Log.d("AR_RESULT",  Arrays.toString(tvecs[2]));
-                Log.d("AR_RESULT",  Arrays.toString(tvecs[3]));
-            } else if (ids.rows() != 0 && ids.rows() < 4) { // get first ar and let loose
-                this.selected_id = ids.get(0,0)[0];
-                this.tvecs[0][0] = _tvecs.get(0,0)[0];
-                this.tvecs[0][1] = _tvecs.get(0,0)[1];
-                this.tvecs[0][2] = _tvecs.get(0,0)[2];
-            } else {
-                Log.e("AR discover", "Failed To read Array");
-            }
-        }
-
-        public Point getTargetLocation () {
-            double center_w = 0.0;
-            double center_h = 0.0;
-            double depth_y = 0.0;
-            double[] result = new double[3];
-
-            if (selected_id == 0.0) { // all 4 ar
-                center_w = (((tvecs[0][0] + tvecs[1][0]) / 2) + ((tvecs[2][0] + tvecs[3][0]) / 2)) / 2;
-                center_h = (((tvecs[0][1] + tvecs[3][1]) / 2) + ((tvecs[1][1] + tvecs[2][1]) / 2)) / 2;
-                depth_y = (tvecs[0][2] + tvecs[1][2] + tvecs[2][2] + tvecs[3][2]) / 4;
-            }
-            Log.d("calculateDat", "W: "+ center_w + " H: "+ center_h + " depth: " + depth_y);
-            //Kinematics astrobee = api.getTrustedRobotKinematics();
-            //Point _point = astrobee.getPosition();
-            Point _point = new Point(11.21,-9.6,4.79);
-            result[0] = _point.getX() + center_w;
-            result[1] = _point.getY() - depth_y;
-            result[2] = _point.getZ() + center_h;
-            Log.d("TargetPos", "X: "+ result[0] + " Y: "+ result[1] + " Z: " + result[2]);
-
-            return new Point(result[0],result[1],result[2]);
-        }
 
 
-    }
+//    public AR_result AR_scanAndLocalize(boolean status) {
+//        long start_time = SystemClock.elapsedRealtime();
+//        int row = 0, col = 0;
+//        double[][] NavCamInst = api.getNavCamIntrinsics();
+//        Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
+//        Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
+////        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
+//        cameraMatrix.put(row, col, NavCamInst[0]);
+//        distCoeffs.put(row, col, NavCamInst[1]);
+//        Log.d("cameraMatrix", cameraMatrix.dump());
+//        Log.d("distCoeffs", distCoeffs.dump());
+//
+//        Mat ids = new Mat();
+//        Mat tvecs = new Mat();
+//        Mat rvecs = new Mat();
+//        List<Mat> corners = new ArrayList<>();
+//        List<Mat> rej = new ArrayList<>();
+//        double result = 0.0;
+//        Log.d("AR", "Started reading AR");
+//        while (result == 0) {
+//            AR_snap = api.getMatNavCam();
+//            //Mat AR_mat = imProveImaging(AR_snap, false, 2);
+//            try {
+//                DetectorParameters parameters = DetectorParameters.create();
+////                parameters.set_errorCorrectionRate(1);
+//                if (status) {
+//                    parameters.set_adaptiveThreshWinSizeMin(5);
+//                    parameters.set_adaptiveThreshWinSizeMax(29);
+//                    parameters.set_adaptiveThreshWinSizeStep(4);
+//                }
+//                Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
+//                Aruco.detectMarkers(AR_snap, dictionary, corners, ids, parameters,rej,cameraMatrix,distCoeffs);
+//                if (!ids.empty()) {
+//                    Aruco.estimatePoseSingleMarkers(corners, 0.05f, cameraMatrix, distCoeffs, rvecs, tvecs);
+//                    result = ids.get(0, 0)[0];
+//                    Log.d("AR_IDs", "Result : " + result);
+//                    Log.d("AR_IDs", ids.dump());
+//                    Log.d("AR_IDs", "col "+ids.cols()+" row "+ids.rows());
+//                    Log.d("AR_IDs", "col "+tvecs.cols()+" row "+tvecs.rows()+ " len "+tvecs.get(0,0).length);
+//                    break;
+//                }
+//            } catch (Exception e) {
+//                Log.d("AR discover:", "Not detected");
+//                e.printStackTrace();
+//            }
+//        }
+//        long stop_time = SystemClock.elapsedRealtime();
+//        Log.d("AR_TIME:"," "+ (stop_time-start_time)/1000);
+//        return new AR_result(ids, tvecs);
+//    }
 
-    public AR_result AR_scanAndLocalize(boolean status) {
-        long start_time = SystemClock.elapsedRealtime();
-        int row = 0, col = 0;
-        double[][] NavCamInst = api.getNavCamIntrinsics();
-        Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
-        Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
-//        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
-        cameraMatrix.put(row, col, NavCamInst[0]);
-        distCoeffs.put(row, col, NavCamInst[1]);
-        Log.d("cameraMatrix", cameraMatrix.dump());
-        Log.d("distCoeffs", distCoeffs.dump());
-
-        Mat ids = new Mat();
-        Mat tvecs = new Mat();
-        Mat rvecs = new Mat();
-        List<Mat> corners = new ArrayList<>();
-        List<Mat> rej = new ArrayList<>();
-        double result = 0.0;
-        Log.d("AR", "Started reading AR");
-        while (result == 0) {
-            AR_snap = api.getMatNavCam();
-            Mat AR_mat = imProveImaging(AR_snap, false, 2);
-            try {
-                DetectorParameters parameters = DetectorParameters.create();
-//                parameters.set_errorCorrectionRate(1);
-                if (status) {
-                    parameters.set_adaptiveThreshWinSizeMin(5);
-                    parameters.set_adaptiveThreshWinSizeMax(29);
-                    parameters.set_adaptiveThreshWinSizeStep(4);
-                }
-                Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
-                Aruco.detectMarkers(AR_mat, dictionary, corners, ids, parameters,rej,cameraMatrix,distCoeffs);
-                if (!ids.empty()) {
-                    Aruco.estimatePoseSingleMarkers(corners, 0.05f, cameraMatrix, distCoeffs, rvecs, tvecs);
-                    result = ids.get(0, 0)[0];
-                    Log.d("AR_IDs", "Result : " + result);
-                    Log.d("AR_IDs", ids.dump());
-                    Log.d("AR_IDs", "col "+ids.cols()+" row "+ids.rows());
-                    Log.d("AR_IDs", "col "+tvecs.cols()+" row "+tvecs.rows()+ " len "+tvecs.get(0,0).length);
-                    break;
-                }
-            } catch (Exception e) {
-                Log.d("AR discover:", "Not detected");
-                e.printStackTrace();
-            }
-        }
-        long stop_time = SystemClock.elapsedRealtime();
-        Log.d("AR_TIME:"," "+ (stop_time-start_time)/1000);
-        return new AR_result(ids, tvecs);
-    }
-
-    public double[] parseQRinfo(String QRData)
+    public double[] parseQRinfo(String QRData) // no need
     {
         String[] remnants = QRData.split(",");
 
@@ -286,6 +193,38 @@ public class YourService extends KiboRpcService {
     public void sleep(int timer) throws InterruptedException
     {
         TimeUnit.SECONDS.sleep(timer);
+    }
+
+    public String QR_method(int maxRetryTimes) {
+        String QRPointA = null;
+        int retryTimes = 0;
+        while(QRPointA == null && retryTimes < maxRetryTimes) {
+            airlock_snap = api.getMatNavCam();
+
+            Bitmap QR_Bitmap;
+            Mat QR_mat = QRFocus(airlock_snap);
+            Log.d("IMGPROC", "Bitmap conversion started");
+            try {
+                QR_Bitmap = Bitmap.createBitmap(QR_mat.cols(), QR_mat.rows(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(QR_mat, QR_Bitmap);
+                Log.d("IMGPROC", "Bitmap conversion finished");
+                QRPointA = QRscaner(QR_Bitmap);
+            }
+            catch (CvException e){Log.d("Exception",e.getMessage());}
+            // Bitmap QR_crop = Bitmap.createBitmap(QR_snap,0,0,960,960);
+            retryTimes++;
+        }
+
+        if (QRPointA == null) { // if the filter doesn't work --> process through the entire bitmap
+            retryTimes = 0;
+            while(QRPointA == null && retryTimes < maxRetryTimes) {
+                Bitmap QR_revive = api.getBitmapNavCam();
+                QRPointA = QRscaner(QR_revive);
+                retryTimes++;
+            }
+        }
+        Log.d("QR", QRPointA);
+        return QRPointA;
     }
 
     public String QRscaner(Bitmap source) // removed static //
@@ -320,37 +259,19 @@ public class YourService extends KiboRpcService {
     }
 
 
-    public  Mat imProveImaging(Mat source, boolean undistort_state , int read_mode) { // 1 qr 2 ar 3 etc
+    public  Mat QRFocus(Mat source) { // 1 qr 2 ar 3 etc
         long start_time = SystemClock.elapsedRealtime();
-        int row = 0, col = 0;
-        double[][] NavCamInst = api.getNavCamIntrinsics();
-        Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
-        Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
-        Mat dst = new Mat(1280, 960, CvType.CV_8UC1);
-        cameraMatrix.put(row, col, NavCamInst[0]);
-        distCoeffs.put(row, col, NavCamInst[1]);
-        Log.d("cameraMatrix", cameraMatrix.dump());
-        Log.d("distCoeffs", distCoeffs.dump());
-        Mat Thres = new Mat();
-        Mat result = new Mat();
-        if (undistort_state) {
-            Log.d("IMGPROC", "Undistortion process started");
-            Imgproc.undistort(source, dst, cameraMatrix, distCoeffs);
-            Log.d("IMGPROC", "Undistortion process finished");
-        } else {
-            Log.d("IMGPROC", "Skipping Undistortion process");
-            dst = source;
-        }
 
+        Mat thres = new Mat();
+        Mat result = new Mat();
         Log.d("IMGPROC", "Threshold process started");
-        Imgproc.threshold(dst, Thres, 240, 255, Imgproc.THRESH_TOZERO);
+        Imgproc.threshold(source, thres, 240, 255, Imgproc.THRESH_TOZERO);
         Log.d("IMGPROC", "Threshold process finished");
         Log.d("IMGPROC", "Contour location process started");
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         List<MatOfPoint> Wanted_contours = new ArrayList<MatOfPoint>();
-        Imgproc.findContours(Thres, contours, new Mat(), Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thres, contours, new Mat(), Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // QR Mode variable //
         Rect boundingBox = new Rect();
 
         for(int i=0; i< contours.size();i++)
@@ -358,38 +279,25 @@ public class YourService extends KiboRpcService {
             if ((Imgproc.contourArea(contours.get(i)) >7000))//Imgproc.contourArea(contours.get(i)) > 50
             {
                 boundingBox = Imgproc.boundingRect(contours.get(i));
-                if (read_mode == 1) {
-                    if (boundingBox.height > boundingBox.width) {
-                        Wanted_contours.add(contours.get(i));
-                       // System.out.println(contours.get(i).dump());
-                    }
-                } else if (read_mode == 2) {
-                    if (boundingBox.height < boundingBox.width) {
-                        Wanted_contours.add(contours.get(i));
-                        // System.out.println(contours.get(i).dump());
-                    }
-                } else {
+                if (boundingBox.height > boundingBox.width) {
                     Wanted_contours.add(contours.get(i));
-                    //System.out.println(contours.get(i).dump());
+                   // System.out.println(contours.get(i).dump());
                 }
-
             }
         }
         Log.d("IMGPROC", "Contour location process finished");
         Log.d("IMGPROC", "Filling process started");
-        Mat mask = new Mat( new Size( dst.cols(), dst.rows() ), CvType.CV_8UC1 );
-        Imgproc.drawContours(dst, Wanted_contours, -1, new Scalar(255,255,255), 3);
+        Mat mask = new Mat( new Size( source.cols(), source.rows() ), CvType.CV_8UC1 );
+        Imgproc.drawContours(source, Wanted_contours, -1, new Scalar(255,255,255), 3);
         Imgproc.fillPoly(mask , Wanted_contours, new Scalar(255, 255, 255));
-        Core.bitwise_and(dst,mask,result);
+        Core.bitwise_and(source,mask,result);
         Log.d("IMGPROC", "Filling process finished");
 
         long stop_time = SystemClock.elapsedRealtime();
         Log.d("IMGPROC_TIME:"," "+ (stop_time-start_time)/1000);
-        if (read_mode == 1) {
-            return result.submat(boundingBox.y, boundingBox.y + boundingBox.height, boundingBox.x, boundingBox.x + boundingBox.width);
-        } else {
-            return result;
-        }
+
+        return result.submat(boundingBox.y, boundingBox.y + boundingBox.height, boundingBox.x, boundingBox.x + boundingBox.width);
+
 
     }
 
