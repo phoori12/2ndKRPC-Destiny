@@ -3,7 +3,6 @@ package jp.jaxa.iss.kibo.rpc.defaultapk;
 import gov.nasa.arc.astrobee.Kinematics;
 import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 
-import jp.jaxa.iss.kibo.rpc.api.types.PointCloud;
 
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
@@ -21,6 +20,7 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
 import org.opencv.android.Utils;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvException;
 import org.opencv.core.CvType;
@@ -34,6 +34,7 @@ import org.opencv.imgproc.Imgproc;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,7 +84,7 @@ public class YourService extends KiboRpcService {
         }
         QRPointA = QR_method(max_try);
         api.sendDiscoveredQR(QRPointA);
-        
+
 //        QRData = parseQRinfo(QRPointA);
 //        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
 
@@ -125,7 +126,150 @@ public class YourService extends KiboRpcService {
         // write here your plan 3
     }
 
+    class ARProcessing {
 
+        private int dictID = Aruco.DICT_5X5_250;
+        private Mat ids;
+        private ArrayList<Mat> corners;
+        private Dictionary dict;
+        private Scalar borderColor;
+        private float markerSize;
+        private Mat rvecs;
+        private Mat tvecs;
+        private Mat image;
+        private HashMap<Integer, Mat> ARRotations;
+        private HashMap<Integer, Mat> ARTranslation;
+        private HashMap<Integer, double[]> AR_LookUpTable; // might try sparseIntArray later on for lesser memory allocation
+        private myMathmanager demon;
+
+        public ARProcessing(Mat image) {
+            this.image = image;
+            this.rvecs = new Mat();
+            this.tvecs = new Mat();
+            this.ARRotations = new HashMap<Integer, Mat>();
+            this.ARTranslation = new HashMap<Integer, Mat>();
+            this.AR_LookUpTable = new HashMap<Integer, double[]>();
+            // Define AR Look up Table for each id //
+            this.AR_LookUpTable.put(1, new double[] {-0.1125, 0.415}); // -x // +z
+            this.AR_LookUpTable.put(2, new double[] {0.1125, 0.415}); // +x // +z
+            this.AR_LookUpTable.put(3, new double[] {0.1125, -0.415}); // +x // -z
+            this.AR_LookUpTable.put(4, new double[] {-0.1125, -0.415}); // -x // -z
+            demon = new myMathmanager();
+        }
+
+        private int[] getTrustedTargetPlane() {
+            if (tvecs == null || rvecs == null) {
+                Log.d("ARProcessing","Either tvecs or rvecs is null");
+                return new int[] {0,0};
+            }
+            HashMap<Integer, double[]> ARCandidates = new HashMap<Integer, double[]>();
+
+            for(int i=0;i<rvecs.size().height;i++) {
+                Mat rvec=new Mat(1,3,CvType.CV_64FC1);
+                Mat tvec=new Mat(1,3,CvType.CV_64FC1);
+                Mat rot=new Mat();
+                rvec.put(0, 0, rvecs.get(i,0));
+                tvec.put(0, 0, tvecs.get(i,0));
+                Calib3d.Rodrigues(rvec, rot);
+                // Put in hashmap for easy iteration next loop
+                ARRotations.put((int)ids.get(i, 0)[0], rot);
+                ARTranslation.put((int)ids.get(i, 0)[0], tvec);
+                ARCandidates.put((int)ids.get(i, 0)[0], demon.ToEuler(demon.rotMatToQuaternions(rot)));
+
+                Log.d("mathmanager",(int)ids.get(i, 0)[0] + " : " +Arrays.toString( demon.ToEuler(demon.rotMatToQuaternions(rot))));
+            }
+
+            // x y z sorting
+            double[] diff = new double[4];
+            for (int i=0;i<3;i++) { // final index is its id
+                double mean = 0;
+                int index = -999;
+
+                for (int j=1;j <= 4;j++) {
+                    if (ARCandidates.get(j) == null) continue;
+                    mean += ARCandidates.get(j)[i];
+                }
+                mean /= ARCandidates.size();
+
+
+                for (int j = 1;j <= 4;j++) {
+                    if (ARCandidates.get(j) == null) {
+                        diff[j-1] = -999;
+                        continue;
+                    }
+                    diff[j-1] = Math.abs(mean - ARCandidates.get(j)[i]);
+                }
+                double maxValue = diff[0];
+                if (diff[0] > diff[1] && diff[0] > diff[2] && diff[0] > diff[3]) index = 1;
+                for (int j = 0;j < 4;j++) {
+                    if(diff[j] > maxValue){
+                        maxValue = diff[j];
+                        index = j+1;
+                    }
+
+                }
+
+                if (ARCandidates.get(index) != null) ARCandidates.remove(index);
+
+            }
+
+            if (ARCandidates.size() == 4) {
+                Log.d("ARProcessing","ALL Markers are usable, Preparing to average the tvecs and rvecs . . .");
+                return new int[] {1, 2, 3, 4};
+            } else {
+                Log.d("ARProcessing","Not all 4 Marker are usable, selecting only 1 tvecs and rvecs from the first index . . .");
+            }
+
+
+            for (int j = 1;j< 5 ;j++) {
+                if (ARCandidates.get(j) == null) continue;
+                Log.d("ARProcessing",j + " >> " +"roll: " + ARCandidates.get(j)[0] + " pitch: " +  ARCandidates.get(j)[1] + " yaw: " + ARCandidates.get(j)[2]);
+                return new int[] {j};
+            }
+
+
+            return null; // no ar found // error
+
+        }
+
+        public double[] getTargetPosition(int[] AR_Ids) {
+            if (AR_Ids.length == 4) {
+                // calculate all average and return // do later
+            }
+            Log.d("ARProcessing","AR_IDs: "+AR_Ids[0]);
+            double[][] matrix1 = new double[4][4];
+            double[] matrix2 = new double[4];
+            // AR Frame to Camera Frame //
+            matrix1[0][0] = ARRotations.get(AR_Ids[0]).get(0, 0)[0]; matrix1[0][1] = ARRotations.get(AR_Ids[0]).get(0, 1)[0]; matrix1[0][2] = ARRotations.get(AR_Ids[0]).get(0, 2)[0]; matrix1[0][3] = ARTranslation.get(AR_Ids[0]).get(0, 0)[0];
+            matrix1[1][0] = ARRotations.get(AR_Ids[0]).get(1, 0)[0]; matrix1[1][1] = ARRotations.get(AR_Ids[0]).get(1, 1)[0]; matrix1[1][2] = ARRotations.get(AR_Ids[0]).get(1, 2)[0]; matrix1[1][3] = ARTranslation.get(AR_Ids[0]).get(0, 1)[0];
+            matrix1[2][0] = ARRotations.get(AR_Ids[0]).get(2, 0)[0]; matrix1[2][1] = ARRotations.get(AR_Ids[0]).get(2, 1)[0]; matrix1[2][2] = ARRotations.get(AR_Ids[0]).get(2, 2)[0]; matrix1[2][3] = ARTranslation.get(AR_Ids[0]).get(0, 2)[0];
+            matrix1[3][0] = 0; matrix1[3][1] = 0; matrix1[3][2] = 0; matrix1[3][3] = 1;
+
+            matrix2[0] = AR_LookUpTable.get(AR_Ids[0])[0];
+            matrix2[1] = 0;
+            matrix2[2] = AR_LookUpTable.get(AR_Ids[0])[1];
+            matrix2[3] = 1;
+            Log.d("ARProcessing","Original tvec" + ARTranslation.get(AR_Ids[0]).dump());
+            double[] NC_coords = demon.homogeneousTransform(matrix1, matrix2); // w d h
+            Log.d("ARProcessing","New tvec" + Arrays.toString(NC_coords));
+            double[] pos = new double[3];
+            // Camera frame to Laser Frame //
+            pos[0] = NC_coords[0] - 0.0994;
+            pos[1] = 0; // -NC_coords[2] + 0.0125
+            pos[2] = NC_coords[1] + 0.0285;
+            // Laser frame to Robot Frame //
+            pos[0] = pos[0] + 0.0572;
+            pos[1] = 0;
+            pos[2] = pos[2] - 0.1111;
+            // Robot frame to Global Frame //
+            pos[0] = pos[0] + 11.247;
+            pos[1] = 0.1302 - ARTranslation.get(AR_Ids[0]).get(0, 2)[0] - 9.483; // inverse transform
+            pos[2] = pos[2] + 4.868;
+            Log.d("ARProcessing",Arrays.toString(pos));
+            //System.out.println(demon.rotationCalculator(11.247, -9.483, 4.868, pos[0], pos[1], pos[2]));
+            return pos;
+        }
+    }
 
 //    public AR_result AR_scanAndLocalize(boolean status) {
 //        long start_time = SystemClock.elapsedRealtime();
@@ -177,6 +321,158 @@ public class YourService extends KiboRpcService {
 //        Log.d("AR_TIME:"," "+ (stop_time-start_time)/1000);
 //        return new AR_result(ids, tvecs);
 //    }
+
+    class myMathmanager {
+
+
+        public Quaternion rotMatToQuaternions(Mat rot) {
+            float qua_x = 0,qua_y = 0,qua_z = 0,qua_w = 0;
+            float tr = (float)rot.get(0, 0)[0] + (float)rot.get(1, 1)[0] + (float)rot.get(2,2)[0]; // m00 + m11 + m22
+            if (tr > 0) {
+                float S = (float)Math.sqrt(tr+1.0f) * 2; // S=4*qw
+                qua_w = 0.25f * S;
+                qua_x = ((float)rot.get(2, 1)[0] - (float)rot.get(1, 2)[0]) / S; // (m21 - m12) / S
+                qua_y = ((float)rot.get(0, 2)[0] - (float)rot.get(2, 0)[0]) / S; // (m02 - m20) / S
+                qua_z = ((float)rot.get(1, 0)[0] - (float)rot.get(0, 1)[0]) / S; // (m10 - m01) / S
+            } else if (((float)rot.get(0, 0)[0] > (float)rot.get(1, 1)[0])&((float)rot.get(0, 0)[0] > (float)rot.get(2, 2)[0])) { // (m00 > m11)&(m00 > m22)
+                float S = (float)Math.sqrt(1.0f + (float)rot.get(0, 0)[0] - (float)rot.get(1, 1)[0] - (float)rot.get(2, 2)[0]) * 2; // S=4*qx sqrt(1.0 + m00 - m11 - m22) * 2
+                qua_w = ((float)rot.get(2, 1)[0] - (float)rot.get(1, 2)[0]) / S; // (m21 - m12) / S
+                qua_x = 0.25f * S;
+                qua_y = ((float)rot.get(0, 1)[0] + (float)rot.get(1, 0)[0]) / S; // (m01 + m10) / S
+                qua_z = ((float)rot.get(0, 2)[0] + (float)rot.get(2, 0)[0]) / S; // (m02 + m20) / S
+            } else if ((float)rot.get(1, 1)[0] > (float)rot.get(2, 2)[0]) { // m11 > m22
+                float S = (float)Math.sqrt(1.0 + (float)rot.get(1, 1)[0] - (float)rot.get(0, 0)[0] - (float)rot.get(2, 2)[0]) * 2; // S=4*qy sqrt(1.0 + m11 - m00 - m22) * 2
+                qua_w = ((float)rot.get(0, 2)[0] - (float)rot.get(2, 0)[0]) / S; // (m02 - m20) / S
+                qua_x = ((float)rot.get(0, 1)[0] + (float)rot.get(1, 0)[0]) / S; // (m01 + m10) / S
+                qua_y = 0.25f * S;
+                qua_z = ((float)rot.get(1, 2)[0] + (float)rot.get(2, 1)[0]) / S; // (m12 + m21) / S
+            } else {
+                float S = (float)Math.sqrt(1.0 + (float)rot.get(2, 2)[0] - (float)rot.get(0, 0)[0] - (float)rot.get(1, 1)[0]) * 2; // S=4*qz sqrt(1.0 + m22 - m00 - m11) * 2
+                qua_w = ((float)rot.get(1, 0)[0] - (float)rot.get(0, 1)[0]) / S; // (m10 - m01) / S
+                qua_x = ((float)rot.get(0, 2)[0] + (float)rot.get(2, 0)[0]) / S; // (m02 + m20) / S
+                qua_y = ((float)rot.get(1, 2)[0] + (float)rot.get(2, 1)[0]) / S; // (m12 + m21) / S
+                qua_z = 0.25f * S;
+            }
+            return new Quaternion(qua_x,qua_y,qua_z,qua_w);
+        }
+
+        public Quaternion normalize(Quaternion q) {
+            double x = q.getX();
+            double y = q.getY();
+            double z = q.getZ();
+            double w = q.getW();
+            double norm = Math.sqrt(x*x + y*y + z*z + w*w);
+            double x_,y_,z_,w_;
+            x_ = x / norm;
+            y_ = y / norm;
+            z_ = z / norm;
+            w_ = w / norm;
+
+            return new Quaternion((float)x_,(float)y_,(float)z_,(float)w_);
+        }
+
+        public double[] ToEuler(Quaternion q) {
+            // EULER ZYX ORDER
+            double x = q.getX();
+            double y = q.getY();
+            double z = q.getZ();
+            double w = q.getW();
+            double heading = 0;
+            double attitude = 0;
+            double bank = 0;
+            double sqw = w*w;
+            double sqx = x*x;
+            double sqy = y*y;
+            double sqz = z*z;
+            double unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
+            double test = x*y + z*w;
+            if (test > 0.499*unit) { // singularity at north pole
+                heading = Math.toDegrees(2 * Math.atan2(x,w));
+                attitude = Math.toDegrees(Math.PI/2);
+                bank = 0;
+                return new double[] {bank,heading,attitude};
+            }
+            if (test < -0.499*unit) { // singularity at south pole
+                heading = Math.toDegrees(-2 * Math.atan2(x,w));
+                attitude = Math.toDegrees(-Math.PI/2);
+                bank = 0;
+                return new double[] {bank,heading,attitude};
+            }
+            heading = Math.toDegrees(Math.atan2(2*y*w-2*x*z , sqx - sqy - sqz + sqw));
+            attitude = Math.toDegrees(Math.asin(2*test/unit));
+            bank = Math.toDegrees(Math.atan2(2*x*w-2*y*z , -sqx + sqy - sqz + sqw));
+            return new double[] {bank,heading,attitude};
+        }
+
+        public Quaternion ToQuaternion(double roll, double pitch, double yaw) // yaw (Z), pitch (Y), roll (X)
+        {
+            roll = Math.toRadians(roll);
+            pitch = Math.toRadians(pitch);
+            yaw = Math.toRadians(yaw);
+            // Abbreviations for the various angular functions
+            double cy = Math.cos(yaw * 0.5);
+            double sy = Math.sin(yaw * 0.5);
+            double cp = Math.cos(pitch * 0.5);
+            double sp = Math.sin(pitch * 0.5);
+            double cr = Math.cos(roll * 0.5);
+            double sr = Math.sin(roll * 0.5);
+
+
+            float qua_w = (float)(cr * cp * cy + sr * sp * sy);
+            float qua_x = (float)(sr * cp * cy - cr * sp * sy);
+            float qua_y = (float)(cr * sp * cy + sr * cp * sy);
+            float qua_z = (float)(cr * cp * sy - sr * sp * cy);
+
+            return new Quaternion(qua_x, qua_y, qua_z, qua_w);
+        }
+
+
+        public double[] homogeneousTransform(double[][] matrix1, double[] matrix2) {
+            double[] matrixAns = new double[4];
+
+            //Calculation Part//
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    matrixAns[i] += matrix1[i][j] * matrix2[j];
+                }
+            }
+            // debug //
+            //System.out.println(Arrays.toString(matrixAns));
+            return new double[] {matrixAns[0] , matrixAns[1], matrixAns[2]};
+        }
+
+        public Quaternion rotationCalculator(double x, double y, double z, double xp, double yp,double zp)
+        {
+            double x_sub,y_sub,z_sub,x_deg,z_deg;
+            x_sub  = xp-x; // + is right // - is left
+            y_sub = Math.abs(yp-y); // always absolute
+
+            double bftan = x_sub/y_sub;
+            z_deg = Math.toDegrees(Math.atan(bftan));
+            double z_deg_final = z_deg - 90;
+           // System.out.println("z deg: " + z_deg);
+            z_sub = zp-z; // + is down // - is up
+            bftan = z_sub/y_sub;
+            x_deg = -Math.toDegrees(Math.atan(bftan));
+           // System.out.println("x deg: " + x_deg);
+            z_deg = Math.toRadians(z_deg_final);
+            x_deg = Math.toRadians(x_deg);
+
+            double cy = Math.cos(z_deg * 0.5);
+            double sy = Math.sin(z_deg * 0.5);
+            double cp = Math.cos(0 * 0.5);
+            double sp = Math.sin(0 * 0.5);
+            double cr = Math.cos(x_deg * 0.5);
+            double sr = Math.sin(x_deg * 0.5);
+
+            double qua_w = cr * cp * cy + sr * sp * sy;
+            double qua_x = sr * cp * cy - cr * sp * sy;
+            double qua_y = -(cr * sp * cy + sr * cp * sy); //zyx
+            double qua_z = cr * cp * sy - sr * sp * cy;
+            Quaternion q = new Quaternion((float)qua_x,(float)qua_y,(float)qua_z,(float)qua_w);
+            return q;
+        }
+    }
 
     public double[] parseQRinfo(String QRData) // no need
     {
