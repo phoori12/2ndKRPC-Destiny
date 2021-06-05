@@ -2,4 +2,4 @@ app/build/
 build/intermediates/
 .gradle/
 .idea/
-
+local.properties
