@@ -78,7 +78,7 @@ public class YourService extends KiboRpcService {
         api.startMission();
 
         //moveToWrapper(10.5,-9.8,4.6,0,0,-0.707,0.707,0);
-        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z,0,0,-0.707,0.707,5);
+        moveToWrapper(10.9,-9.6,4.79,0,0,-0.707,0.707,5);
         try {
             sleep(sleep_time);
         } catch (Exception e) {
@@ -86,38 +86,36 @@ public class YourService extends KiboRpcService {
         }
         QRPointA = QR_method(max_try);
         api.sendDiscoveredQR(QRPointA);
+        moveToWrapper(11.21,-9.6,4.79,0.5,-0.5,-0.5,0.5,5);
 
-//        QRData = parseQRinfo(QRPointA);
-//        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
 
-//        ARProcessing ARbee = new ARProcessing(airlock_snap);
-//        Point target = ARbee.getTargetPosition();
-        Point target = new Point(11.216241380218749,-10.585,5.383219465154266);
-        ////////////////////////// AR PROCESS //////////////////////////
+        // rolling stone sequence
 
-//        AR_result targetData = AR_scanAndLocalize(false);
-//        Point target = targetData.getTargetLocation();
+
+
+        Point target = new Point(11.21,-10.6,5.31);
+
+
+//	moveToWrapper(10.5, -9.3, 4.79, 0, 0, -0.707, 0.707, 0);
+//       Kinematics astrobee = api.getTrustedRobotKinematics();
+//       Point point = astrobee.getPosition();
+//        myMathmanager celes = new myMathmanager();
+//        Quaternion IgniteAngle = celes.rotationCalculator(point.getX()+0.0572,point.getY()-0.1302,point.getZ()-0.1111, target.getX(), target.getY(), target.getZ());
+//        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
+//        moveToWrapper(point.getX(),point.getY(),point.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 //
 //
-//        Kinematics astrobee = api.getTrustedRobotKinematics();
-//        Point point = astrobee.getPosition();
-        myMathmanager celes = new myMathmanager();
-        Quaternion IgniteAngle = celes.rotationCalculator(11.21,-9.6,4.79, target.getX()-0.0572, target.getY()+0.1302, target.getZ()-0.1111);
-        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
-
-
-        api.laserControl(true);
-        api.takeSnapshot();
-        api.laserControl(false);
-
-
-        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
-        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
-
-
-
-        api.reportMissionCompletion();
+//        api.laserControl(true);
+//        api.takeSnapshot();
+//        api.laserControl(false);
+//
+//
+//        moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
+//        moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
+//
+//
+//
+//        api.reportMissionCompletion();
 
     }
 
