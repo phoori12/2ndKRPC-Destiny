@@ -7,7 +7,6 @@ import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
-import sensor_msgs.PointCloud2;
 
 import android.graphics.Bitmap;
 import android.os.SystemClock;
@@ -43,7 +42,6 @@ import org.opencv.aruco.Aruco;
 import org.opencv.aruco.DetectorParameters;
 import org.opencv.aruco.Dictionary;
 
-import jp.jaxa.iss.kibo.rpc.defaultapk.DestinyCore;
 
 /**
  * Class meant to handle commands from the Ground Data System and execute them in Astrobee
@@ -56,7 +54,7 @@ public class YourService extends KiboRpcService {
     Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
     Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
 
-    private DestinyCore destinyCore;
+
     
     @Override
     protected void runPlan1(){
