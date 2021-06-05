@@ -1,13 +1,3 @@
 app/build/
-.gradle/3.3/taskArtifacts/fileHashes.bin
-.gradle/3.3/taskArtifacts/fileSnapshots.bin
-.gradle/3.3/taskArtifacts/taskArtifacts.bin
-.gradle/3.3/taskArtifacts/taskArtifacts.lock
-.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock
-.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock
-.idea/caches/build_file_checksums.ser
-.idea/libraries/Gradle__2ndKRPC_Destiny_guest_science_library_unspecified_aar.xml
-.idea/libraries/Gradle__2ndKRPC_Destiny_kibo_rpc_api_unspecified_aar.xml
-.idea/modules.xml
-.idea/workspace.xml
-build/intermediates/dex-cache/cache.xml
+.gradle/
+.idea/
