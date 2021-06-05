@@ -39,7 +39,7 @@ import org.opencv.aruco.Aruco;
 import org.opencv.aruco.DetectorParameters;
 import org.opencv.aruco.Dictionary;
 
-
+import jp.jaxa.iss.kibo.rpc.defaultapk.DestinyCore;
 
 /**
  * Class meant to handle commands from the Ground Data System and execute them in Astrobee
@@ -51,6 +51,8 @@ public class YourService extends KiboRpcService {
     Mat AR_snap;
     double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
 
+    private DestinyCore destinyCore;
+    
     @Override
     protected void runPlan1(){
 
