@@ -78,7 +78,7 @@ public class YourService extends KiboRpcService {
         api.startMission();
 
         //moveToWrapper(10.5,-9.8,4.6,0,0,-0.707,0.707,0);
-        moveToWrapper(10.9,-9.6,4.79,0,0,-0.707,0.707,5);
+        moveToWrapper(10.9,-9.8,4.79,0,0,-0.707,0.707,5);
         try {
             sleep(sleep_time);
         } catch (Exception e) {
@@ -86,14 +86,24 @@ public class YourService extends KiboRpcService {
         }
         QRPointA = QR_method(max_try);
         api.sendDiscoveredQR(QRPointA);
-        moveToWrapper(11.21,-9.6,4.79,0.5,-0.5,-0.5,0.5,5);
+       // moveToWrapper(11.21,-9.6,4.79,0.5,-0.5,-0.5,0.5,5); // 0.5 -0.5 -0.5 0.5 roll right 90 deg
 
 
         // rolling stone sequence
+        Point target = new Point(11.216,-10.585,5.31);
+        double[] parkingPos = new double[3];
+        parkingPos[0] = target.getX() - 0.1111;
+        parkingPos[1] = -9.8; // current Y
+        parkingPos[2] = 4.79; // current Z
+        myMathmanager celes = new myMathmanager();
+        Quaternion IgniteAngle = celes.rotationCalculator(target.getX(),-9.8,4.79+0.0572, target.getX(), target.getY(), target.getZ(), 90);
+        moveToWrapper(parkingPos[0],parkingPos[1],parkingPos[2], IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 
 
+        api.laserControl(true);
+//        api.takeSnapshot();
+//        api.laserControl(false);
 
-        Point target = new Point(11.21,-10.6,5.31);
 
 
 //	moveToWrapper(10.5, -9.3, 4.79, 0, 0, -0.707, 0.707, 0);
@@ -427,7 +437,7 @@ public class YourService extends KiboRpcService {
             return new double[] {matrixAns[0] , matrixAns[1], matrixAns[2]};
         }
 
-        public Quaternion rotationCalculator(double x, double y, double z, double xp, double yp,double zp)
+        public Quaternion rotationCalculator(double x, double y, double z, double xp, double yp,double zp, double addY)
         {
             double x_sub,y_sub,z_sub,x_deg,z_deg;
             x_sub  = xp-x; // + is right // - is left
@@ -443,11 +453,11 @@ public class YourService extends KiboRpcService {
             // System.out.println("x deg: " + x_deg);
             z_deg = Math.toRadians(z_deg_final);
             x_deg = Math.toRadians(x_deg);
-
+            addY = Math.toRadians(addY);
             double cy = Math.cos(z_deg * 0.5);
             double sy = Math.sin(z_deg * 0.5);
-            double cp = Math.cos(0 * 0.5);
-            double sp = Math.sin(0 * 0.5);
+            double cp = Math.cos(addY * 0.5);
+            double sp = Math.sin(addY * 0.5);
             double cr = Math.cos(x_deg * 0.5);
             double sr = Math.sin(x_deg * 0.5);
 
