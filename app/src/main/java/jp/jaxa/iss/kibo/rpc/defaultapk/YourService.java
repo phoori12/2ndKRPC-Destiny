@@ -51,14 +51,15 @@ public class YourService extends KiboRpcService {
 
     Mat airlock_snap; // will be initialize upon reading QR
     double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
-    Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
-    Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
+    Mat cameraMatrix;
+    Mat distCoeffs;
 
 
     
     @Override
     protected void runPlan1(){
-
+        cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
+        distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
         String QRPointA = null;
         int max_try = 4;
         int try_read = 0;
@@ -92,12 +93,6 @@ public class YourService extends KiboRpcService {
         Point target = ARbee.getTargetPosition();
         ////////////////////////// AR PROCESS //////////////////////////
 
-//        AR_result targetData = AR_scanAndLocalize(false);
-//        Point target = targetData.getTargetLocation();
-//
-//
-////        Kinematics astrobee = api.getTrustedRobotKinematics();
-////        Point point = astrobee.getPosition();
         myMathmanager celes = new myMathmanager();
         Quaternion IgniteAngle = celes.rotationCalculator(11.21,-9.6,4.79, target.getX(), target.getY(), target.getZ());
         Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
@@ -295,8 +290,8 @@ public class YourService extends KiboRpcService {
             pos[1] = 0;
             pos[2] = pos[2] - 0.1111;
             // Robot frame to Global Frame //
-            Kinematics astrobee = api.getTrustedRobotKinematics();
-            Point point = astrobee.getPosition();
+           // Kinematics astrobee = api.getTrustedRobotKinematics();
+            Point point = new Point(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z);
             pos[0] = pos[0] + point.getX();
             pos[1] = 0.1302 - ARTranslation.get(AR_Ids[0]).get(0, 2)[0] + point.getY(); // inverse transform
             pos[2] = pos[2] + point.getZ();
