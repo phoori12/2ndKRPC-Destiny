@@ -53,12 +53,14 @@ public class YourService extends KiboRpcService {
 
     Mat airlock_snap; // will be initialize upon reading QR
     double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
-    Mat cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
-    Mat distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
+    Mat cameraMatrix;
+    Mat distCoeffs;
 
     @Override
     protected void runPlan1(){
 
+        cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
+        distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
         String QRPointA = null;
         int max_try = 4;
         int try_read = 0;
@@ -66,14 +68,16 @@ public class YourService extends KiboRpcService {
         int sleep_time = 3;
 
         // Initialize camera intrinsic values //
+
+        // Mission Start //
+        api.startMission();
+
         double[][] NavCamInst = api.getNavCamIntrinsics();
         cameraMatrix.put(0, 0, NavCamInst[0]);
         distCoeffs.put(0, 0, NavCamInst[1]);
         Log.d("cameraMatrix", cameraMatrix.dump());
         Log.d("distCoeffs", distCoeffs.dump());
 
-        // Mission Start //
-        api.startMission();
 
         //moveToWrapper(10.5,-9.8,4.6,0,0,-0.707,0.707,0);
         moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z,0,0,-0.707,0.707,5);
