@@ -3,75 +3,66 @@
 
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/54b1b6a09414c61ea76c148ef90c1e8b87e4f342/output/jars/classes.jar"
+        jar="/home/kibo/.android/build-cache/04990a9b21bafe9b3ce825e9a0dc04fded6f3f63/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
         sha1="e8a12af5f81884afc0a660216631f286bf86a448">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_3bae4b29a4ae5668258570f2ac7066d2154b470d/classes.dex" />
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_698db5af18bd6521ceb6917ec687e2ce7a2f77a7/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/77ee28aa7a23b459fe5e24bb4bd0d390fe3c0e55/output/jars/libs/ros-1.0-SNAPSHOT.jar"
+        jar="/home/kibo/.android/build-cache/748a1da5c7d281ce65ebd83b0bfe10c4e465d8c9/output/jars/libs/ff_msgs-0.0.0.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
-        sha1="a572c1afbdb69a1fa3f641c662eade8ed245bc2c">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/ros-1.0-SNAPSHOT_0a2c13a614fbec073ff0f0a769cfc92dad888910/classes.dex" />
+        sha1="51d67762d9e1fd4a5e9c715bbfbced78658dddb6">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/ff_msgs-0.0.0_029700fd4db5918f20c2de60f53273c8d7f8ee42/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/19b62da7c7598cd5e7de6a980ff345e3419841cc/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="a151354aa2e464a67158c80808f72d9f407bb374">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_032a62b5de255e4f420477085208eba094f5cdf4/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/37ea5ae8a2e6c4caa7c7d8b6e32e17df5e9c5adf/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="760ff0a866a9b3b7fe4a91cfe6439d9dc93cea7c">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ee382bd0d0d86eb4fd9ab1726381b215028ec058/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/77ee28aa7a23b459fe5e24bb4bd0d390fe3c0e55/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="72fd8dff2fe2354cfaca363f3963f3d67fd1febe">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b7ba13a281c74752856eb87bb226bdfc12ec6dfb/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/93917d2610243ea7c78ebb01bf8be9ced3c68e41/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="04a44d20bec92359951d025757218220f93b5d4b">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_546f8fb66bdec473d4232a128a7b28fac9082ef8/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/19ea3e2314449d64c94c2f838741993c3051c429/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="6cfba17aa295a3dc53ad710da12d2e8d43092a3b">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_64f23a668b832735d62d06c38823fdaa95561ccb/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/56626c9a502da1b1a4ab0b7616950ac246ebc936/output/jars/classes.jar"
+        jar="/home/kibo/.android/build-cache/fa3d5a2dd4830da2fd9184f050471202c7d8bb63/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
         sha1="d8fe6d91310b54734f454dd490c3c869f6290576">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_7dc52b3137e3dd7fffcf994ca094bf941864a6d5/classes.dex" />
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b109f32572ade3c44bb77fc2df07382b98f7e42e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/6aac6417077b3606fa102dfd22c275791edd32b6/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="4d4d98a0428b2e620e6b4a228ef9f7cb2f0debd2">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_71e3caef9fb5df690cb36d7c5c2caecce25e7a71/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/36919a93e4a769d9a576b93e74b0643369c0f5c3/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="6cfba17aa295a3dc53ad710da12d2e8d43092a3b">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_26935af6f88965cf687ec9295e172ef139132a5c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/748a1da5c7d281ce65ebd83b0bfe10c4e465d8c9/output/jars/libs/api-1.0-SNAPSHOT.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d0c375d9be8682ad66b1dcc36f23e7042ebab943">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/api-1.0-SNAPSHOT_a0953629dd171bccfd900a7337770456aebfecb2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/b8ad40d50ae48c959a648daefd228df9f3947437/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="04a44d20bec92359951d025757218220f93b5d4b">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_a2703f0d4a9c1c81a5476ad1bf66c357bd0543ff/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -84,12 +75,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/77ee28aa7a23b459fe5e24bb4bd0d390fe3c0e55/output/jars/libs/ff_msgs-0.0.0.jar"
+        jar="/home/kibo/.android/build-cache/a8682781f0df2b85b7c0f2f6943914db92fe758a/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
-        sha1="51d67762d9e1fd4a5e9c715bbfbced78658dddb6">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/ff_msgs-0.0.0_9d226c41726fb7b08504d685451776227778a8f6/classes.dex" />
+        sha1="1da33e32ab8494d557dfb2f3c3f8e29fdc5d98b7">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b3684f981c2744ff231f0b724840e9bac0d9463c/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -102,57 +93,75 @@
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/0c4b81a705d608c68d224d990df2d74f78a70c1d/output/jars/classes.jar"
+        jar="/home/kibo/.android/build-cache/19b7a49f099ad2c002244f03cd821d1af0a0ebba/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
-        sha1="10c53f5c31eef672abcb71f0fae721d88318f033">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0cb97e94518d1f6aa39757a3e09fa4ed069d2a98/classes.dex" />
+        sha1="a151354aa2e464a67158c80808f72d9f407bb374">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b4e0cdb709bcfff0489ce6c68a9ef64cb23f931d/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/2b84e4542f2981fd13b08de73e3ffe79d09c5e30/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="2b683125c9eaedd35af5c5324cf33131a3801d1f">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_3f2e659d2ce92a0c84dc351d55dd95e022f10cc9/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/77ee28aa7a23b459fe5e24bb4bd0d390fe3c0e55/output/jars/libs/api-1.0-SNAPSHOT.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="d0c375d9be8682ad66b1dcc36f23e7042ebab943">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/api-1.0-SNAPSHOT_ece6db9636c64ac9dfe61288334164dfbcefa131/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/ec5393611f394c4e649ff2d70910a4dc57622307/output/jars/classes.jar"
+        jar="/home/kibo/.android/build-cache/25adbebd2e697942ccce208688175cae44dc5a7e/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
         sha1="0b723383fcc5c9e6d233f12cf3670c153dcb9f72">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_a5b3c398e01eef7459b1c3ebc5738539f11385de/classes.dex" />
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_2daea01e96cb2f424c2624cf211fccbce21fdd73/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/a31a6191c1543c381dcad6e71e16bcb4993ca216/output/jars/classes.jar"
+        jar="/home/kibo/.android/build-cache/8070e2ff3b71786e2306a64837fff54034c27f3d/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="760ff0a866a9b3b7fe4a91cfe6439d9dc93cea7c">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_800774048a662556f3ce9fb2934361240d51f083/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/04990a9b21bafe9b3ce825e9a0dc04fded6f3f63/output/jars/libs/zbar.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="e671e7a14299d6f2591fc1ae672c49861d3329c6">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/zbar_12b789350fb3d72b753390626fe13eee840eb565/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/76ab1a163c09de515886d81f4a5d6d10443f0380/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
         sha1="8d813c05361147f6f515f749df19223cd6256314">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_4b659fd7af1db4ade28ecd11b772b7cb73ebc4ab/classes.dex" />
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_38ef51b370ae7b27ff2a2f13ea6a19b73e505962/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/935c48a5024c766245bf6daf2fe3afe7a964976d/output/jars/classes.jar"
+        jar="/home/kibo/.android/build-cache/09433a0b008b49bb2d83c588074aabdb0dee5618/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
-        sha1="4d4d98a0428b2e620e6b4a228ef9f7cb2f0debd2">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_2c6af2c869eed318c24f80c48f17411c5373264d/classes.dex" />
+        sha1="10c53f5c31eef672abcb71f0fae721d88318f033">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_69fa2c38d2ec69d8d9a5544afb938bebee6175ac/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/c55c5cb47b82a8a630f4a2534ddf2b810ca036b9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="2b683125c9eaedd35af5c5324cf33131a3801d1f">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_4a7cb506735045615cdf65a7c77e79281da5c18a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/748a1da5c7d281ce65ebd83b0bfe10c4e465d8c9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="72fd8dff2fe2354cfaca363f3963f3d67fd1febe">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_1b46a1718b7f437cb743c0d973376e316641605f/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -165,30 +174,21 @@
     </item>
     <item
         is-multidex="true"
-        jar="/home/kibo/.android/build-cache/8aecb80bc4a980b7c01c4ee3a8eed9e477e8bff5/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="1da33e32ab8494d557dfb2f3c3f8e29fdc5d98b7">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ad2d215d6e8c2dbf77b7b59c47b9f66e8ccc893a/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/kibo/.android/build-cache/54b1b6a09414c61ea76c148ef90c1e8b87e4f342/output/jars/libs/zbar.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="26.0.2"
-        sha1="e671e7a14299d6f2591fc1ae672c49861d3329c6">
-        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/zbar_f4200641c35291108882f7169b7151941d0788b1/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/home/kibo/.gradle/caches/modules-2/files-2.1/com.beust/jcommander/1.72/6375e521c1e11d6563d4f25a07ce124ccf8cd171/jcommander-1.72.jar"
         jumboMode="false"
         optimize="true"
         revision="26.0.2"
         sha1="6375e521c1e11d6563d4f25a07ce124ccf8cd171">
         <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/jcommander-1.72_89fd823ed4ddf97bbaeaa2fcc75d6f3ded2171ca/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/kibo/.android/build-cache/748a1da5c7d281ce65ebd83b0bfe10c4e465d8c9/output/jars/libs/ros-1.0-SNAPSHOT.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="a572c1afbdb69a1fa3f641c662eade8ed245bc2c">
+        <dex dex="/home/kibo/Kibo/2ndKRPC-Destiny/app/build/intermediates/transforms/dex/debug/folders/1000/10/ros-1.0-SNAPSHOT_3ade2c64a5b43c2881940b2ddbfbbf2a9899d9fd/classes.dex" />
     </item>
 
 </items>

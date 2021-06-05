@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: 2ndKRPC-Destiny:guest_science_library:unspecified@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/8aecb80bc4a980b7c01c4ee3a8eed9e477e8bff5/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/8aecb80bc4a980b7c01c4ee3a8eed9e477e8bff5/output/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/a8682781f0df2b85b7c0f2f6943914db92fe758a/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/a8682781f0df2b85b7c0f2f6943914db92fe758a/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
