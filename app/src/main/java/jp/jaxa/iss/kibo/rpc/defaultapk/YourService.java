@@ -264,28 +264,47 @@ public class YourService extends KiboRpcService {
         }
 
         public Point getTargetPosition() {
-            int[] AR_Ids = this.getTrustedTargetPlane();
-            if (AR_Ids == null) return null;
-            if (AR_Ids.length == 4) {
-                // calculate all average and return // do later
-            }
-            Log.d("ARProcessing","AR_IDs: "+AR_Ids[0]);
-            double[][] matrix1 = new double[4][4];
-            double[] matrix2 = new double[4];
-            // AR Frame to Camera Frame //
-            matrix1[0][0] = ARRotations.get(AR_Ids[0]).get(0, 0)[0]; matrix1[0][1] = ARRotations.get(AR_Ids[0]).get(0, 1)[0]; matrix1[0][2] = ARRotations.get(AR_Ids[0]).get(0, 2)[0]; matrix1[0][3] = ARTranslation.get(AR_Ids[0]).get(0, 0)[0];
-            matrix1[1][0] = ARRotations.get(AR_Ids[0]).get(1, 0)[0]; matrix1[1][1] = ARRotations.get(AR_Ids[0]).get(1, 1)[0]; matrix1[1][2] = ARRotations.get(AR_Ids[0]).get(1, 2)[0]; matrix1[1][3] = ARTranslation.get(AR_Ids[0]).get(0, 1)[0];
-            matrix1[2][0] = ARRotations.get(AR_Ids[0]).get(2, 0)[0]; matrix1[2][1] = ARRotations.get(AR_Ids[0]).get(2, 1)[0]; matrix1[2][2] = ARRotations.get(AR_Ids[0]).get(2, 2)[0]; matrix1[2][3] = ARTranslation.get(AR_Ids[0]).get(0, 2)[0];
-            matrix1[3][0] = 0; matrix1[3][1] = 0; matrix1[3][2] = 0; matrix1[3][3] = 1;
 
-            matrix2[0] = AR_LookUpTable.get(AR_Ids[0])[0];
-            matrix2[1] = 0;
-            matrix2[2] = AR_LookUpTable.get(AR_Ids[0])[1];
-            matrix2[3] = 1;
-            Log.d("ARProcessing","Original tvec" + ARTranslation.get(AR_Ids[0]).dump());
-            double[] NC_coords = demon.homogeneousTransform(matrix1, matrix2); // w d h
-            Log.d("ARProcessing","New tvec" + Arrays.toString(NC_coords));
-            double[] pos = new double[3];
+            double[] pos = {0 , 0 , 0};
+            int[] AR_Ids = this.getTrustedTargetPlane();
+            if (rvecs.size().height == 4) { //DEBUG
+
+                for (int i = 0;i < 3;i++) {
+                    for (int j = 0;j < 4;j++) {
+                        pos[i] += tvecs.get(j,0)[i];
+                    }
+                    pos[i] /= 4;
+                }
+                pos[1] = -pos[2];
+                pos[2] = -pos[1];
+                Log.d("ARProcessing","All 4 AR is found, ignoring the rotation matrices ... ");
+                Log.d("ARProcessing",Arrays.toString(pos));
+
+            } else {
+
+                if (AR_Ids == null) return null;
+
+                Log.d("ARProcessing","AR_IDs: "+AR_Ids[0]);
+                double[][] matrix1 = new double[4][4];
+                double[] matrix2 = new double[4];
+                // AR Frame to Camera Frame //
+                matrix1[0][0] = ARRotations.get(AR_Ids[0]).get(0, 0)[0]; matrix1[0][1] = ARRotations.get(AR_Ids[0]).get(0, 1)[0]; matrix1[0][2] = ARRotations.get(AR_Ids[0]).get(0, 2)[0]; matrix1[0][3] = ARTranslation.get(AR_Ids[0]).get(0, 0)[0];
+                matrix1[1][0] = ARRotations.get(AR_Ids[0]).get(1, 0)[0]; matrix1[1][1] = ARRotations.get(AR_Ids[0]).get(1, 1)[0]; matrix1[1][2] = ARRotations.get(AR_Ids[0]).get(1, 2)[0]; matrix1[1][3] = ARTranslation.get(AR_Ids[0]).get(0, 1)[0];
+                matrix1[2][0] = ARRotations.get(AR_Ids[0]).get(2, 0)[0]; matrix1[2][1] = ARRotations.get(AR_Ids[0]).get(2, 1)[0]; matrix1[2][2] = ARRotations.get(AR_Ids[0]).get(2, 2)[0]; matrix1[2][3] = ARTranslation.get(AR_Ids[0]).get(0, 2)[0];
+                matrix1[3][0] = 0; matrix1[3][1] = 0; matrix1[3][2] = 0; matrix1[3][3] = 1;
+
+                matrix2[0] = AR_LookUpTable.get(AR_Ids[0])[0];
+                matrix2[1] = 0;
+                matrix2[2] = AR_LookUpTable.get(AR_Ids[0])[1];
+                matrix2[3] = 1;
+                Log.d("ARProcessing","Original tvec" + ARTranslation.get(AR_Ids[0]).dump());
+                double[] NC_coords = demon.homogeneousTransform(matrix1, matrix2); // w d h
+                Log.d("ARProcessing","New tvec" + Arrays.toString(NC_coords));
+
+                pos[0] = NC_coords[0];
+                pos[2] = NC_coords[1];
+            }
+
             // Camera frame to Laser Frame //
 //            pos[0] = NC_coords[0] - 0.0994;
 //            pos[1] = 0; // -NC_coords[2] + 0.0125
@@ -298,13 +317,13 @@ public class YourService extends KiboRpcService {
             //   moveToWrapper(10.9,-9.8,4.79,0,0,-0.707,0.707,5);
 //            Point point = new Point(10.9,-9.5,4.79);
             // Camera frame to robot frame //
-            pos[0] = NC_coords[0] - 0.0422;
+            pos[0] -= 0.0422;
             pos[1] = 0; // -NC_coords[2] + 0.0125
-            pos[2] = NC_coords[1] - 0.0826;
+            pos[2] -= 0.0826;
             // Robot frame to Global Frame //
-            pos[0] = pos[0] + gotoPos.getX();
+            pos[0] +=  gotoPos.getX();
             pos[1] = -10.585; // inverse transform // 0.1302
-            pos[2] = pos[2] + gotoPos.getZ();
+            pos[2] += gotoPos.getZ();
             Log.d("ARProcessing",Arrays.toString(pos));
             //System.out.println(demon.rotationCalculator(11.247, -9.483, 4.868, pos[0], pos[1], pos[2]));
             return new Point(pos[0], pos[1], pos[2]);
