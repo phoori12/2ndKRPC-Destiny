@@ -51,6 +51,7 @@ public class YourService extends KiboRpcService {
 
     Mat airlock_snap; // will be initialize upon reading QR
     double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
+    Point gotoPos;
     Mat cameraMatrix;
     Mat distCoeffs;
 
@@ -77,7 +78,8 @@ public class YourService extends KiboRpcService {
         api.startMission();
 
         //moveToWrapper(10.5,-9.8,4.6,0,0,-0.707,0.707,0);
-        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z,0,0,-0.707,0.707,5);
+        gotoPos = new Point(11.27, -9.5, 4.79); // edit here
+        moveToWrapper(gotoPos.getX(),gotoPos.getY(),gotoPos.getZ(),0,0,-0.707,0.707,5);
         try {
             sleep(sleep_time);
         } catch (Exception e) {
@@ -93,10 +95,13 @@ public class YourService extends KiboRpcService {
         Point target = ARbee.getTargetPosition();
         ////////////////////////// AR PROCESS //////////////////////////
 
+        double[] parkingPos = new double[3];
+        parkingPos[0] = target.getX() - 0.0572;
+        parkingPos[1] = gotoPos.getY(); // current Y
+        parkingPos[2] = gotoPos.getZ(); // current Z
         myMathmanager celes = new myMathmanager();
-        Quaternion IgniteAngle = celes.rotationCalculator(11.21,-9.6,4.79, target.getX(), target.getY(), target.getZ());
-        Log.d("AR_RESULTa", "" +  IgniteAngle.getX() + " "+ IgniteAngle.getY() + " "+IgniteAngle.getZ() + " "+ IgniteAngle.getW() + " ");
-        moveToWrapper(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+        Quaternion IgniteAngle = celes.rotationCalculator(target.getX(),gotoPos.getY(),gotoPos.getZ()-0.1111, target.getX(), target.getY(), target.getZ(), 0);
+        moveToWrapper(parkingPos[0],parkingPos[1],parkingPos[2], IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
 
 
         api.laserControl(true);
@@ -282,19 +287,24 @@ public class YourService extends KiboRpcService {
             Log.d("ARProcessing","New tvec" + Arrays.toString(NC_coords));
             double[] pos = new double[3];
             // Camera frame to Laser Frame //
-            pos[0] = NC_coords[0] - 0.0994;
-            pos[1] = 0; // -NC_coords[2] + 0.0125
-            pos[2] = NC_coords[1] + 0.0285;
-            // Laser frame to Robot Frame //
-            pos[0] = pos[0] + 0.0572;
-            pos[1] = 0;
-            pos[2] = pos[2] - 0.1111;
-            // Robot frame to Global Frame //
+//            pos[0] = NC_coords[0] - 0.0994;
+//            pos[1] = 0; // -NC_coords[2] + 0.0125
+//            pos[2] = NC_coords[1] + 0.0285;
+//            // Laser frame to Robot Frame //
+//            pos[0] = pos[0] + 0.0572;
+//            pos[1] = 0;
+//            pos[2] = pos[2] - 0.1111;
            // Kinematics astrobee = api.getTrustedRobotKinematics();
-            Point point = new Point(11.21+ncOffset_x,-9.6+ncOffset_y,4.79+ncOffset_z);
-            pos[0] = pos[0] + point.getX();
-            pos[1] = 0.1302 - ARTranslation.get(AR_Ids[0]).get(0, 2)[0] + point.getY(); // inverse transform
-            pos[2] = pos[2] + point.getZ();
+            //   moveToWrapper(10.9,-9.8,4.79,0,0,-0.707,0.707,5);
+//            Point point = new Point(10.9,-9.5,4.79);
+            // Camera frame to robot frame //
+            pos[0] = NC_coords[0] - 0.0422;
+            pos[1] = 0; // -NC_coords[2] + 0.0125
+            pos[2] = NC_coords[1] - 0.0826;
+            // Robot frame to Global Frame //
+            pos[0] = pos[0] + gotoPos.getX();
+            pos[1] = -10.585; // inverse transform // 0.1302
+            pos[2] = pos[2] + gotoPos.getZ();
             Log.d("ARProcessing",Arrays.toString(pos));
             //System.out.println(demon.rotationCalculator(11.247, -9.483, 4.868, pos[0], pos[1], pos[2]));
             return new Point(pos[0], pos[1], pos[2]);
@@ -421,7 +431,7 @@ public class YourService extends KiboRpcService {
             return new double[] {matrixAns[0] , matrixAns[1], matrixAns[2]};
         }
 
-        public Quaternion rotationCalculator(double x, double y, double z, double xp, double yp,double zp)
+        public Quaternion rotationCalculator(double x, double y, double z, double xp, double yp,double zp, double addY)
         {
             double x_sub,y_sub,z_sub,x_deg,z_deg;
             x_sub  = xp-x; // + is right // - is left
@@ -440,8 +450,8 @@ public class YourService extends KiboRpcService {
 
             double cy = Math.cos(z_deg * 0.5);
             double sy = Math.sin(z_deg * 0.5);
-            double cp = Math.cos(0 * 0.5);
-            double sp = Math.sin(0 * 0.5);
+            double cp = Math.cos(addY * 0.5);
+            double sp = Math.sin(addY * 0.5);
             double cr = Math.cos(x_deg * 0.5);
             double sr = Math.sin(x_deg * 0.5);
 
