@@ -275,8 +275,8 @@ public class YourService extends KiboRpcService {
                     }
                     pos[i] /= 4;
                 }
-                pos[1] = -pos[2];
-                pos[2] = -pos[1];
+                pos[1] = -pos[2]; // still bug
+                pos[2] = -pos[1]; //
                 Log.d("ARProcessing","All 4 AR is found, ignoring the rotation matrices ... ");
                 Log.d("ARProcessing",Arrays.toString(pos));
 
