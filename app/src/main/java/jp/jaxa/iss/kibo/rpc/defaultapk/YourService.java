@@ -96,13 +96,13 @@ public class YourService extends KiboRpcService {
         ////////////////////////// AR PROCESS //////////////////////////
 
         // shooting process //
-        double[] parkingPos = new double[3];
-        parkingPos[0] = target.getX() - 0.0572;
-        parkingPos[1] = gotoPos.getY(); // current Y
-        parkingPos[2] = gotoPos.getZ(); // current Z
+//        double[] parkingPos = new double[3];
+//        parkingPos[0] = target.getX() - 0.0572;
+//        parkingPos[1] = gotoPos.getY(); // current Y
+//        parkingPos[2] = gotoPos.getZ(); // current Z
         myMathmanager celes = new myMathmanager();
-        Quaternion IgniteAngle = celes.rotationCalculator(target.getX(),gotoPos.getY(),gotoPos.getZ()-0.1111, target.getX(), target.getY(), target.getZ(), 0);
-        moveToWrapper(parkingPos[0],parkingPos[1],parkingPos[2], IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+        Quaternion IgniteAngle = celes.rotationCalculator(gotoPos.getX()+0.0572,gotoPos.getY(),gotoPos.getZ()-0.1111, target.getX(), target.getY(), target.getZ(), 0);
+        moveToWrapper(gotoPos.getX(),gotoPos.getY(),gotoPos.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
         //////////////////////
 
         api.laserControl(true);
@@ -276,10 +276,11 @@ public class YourService extends KiboRpcService {
                     }
                     pos[i] /= 4;
                 }
+                Log.d("ARProcessing",tvecs.dump());
                 Log.d("ARProcessing",Arrays.toString(pos));
                 double temp = pos[1];
-                pos[1] = -pos[2]; // still bug
-                pos[2] = temp; //
+                pos[1] = -pos[2];
+                pos[2] = temp;
                 Log.d("ARProcessing","All 4 AR is found, ignoring the rotation matrices ... ");
                 Log.d("ARProcessing",Arrays.toString(pos));
 
@@ -300,6 +301,8 @@ public class YourService extends KiboRpcService {
                 matrix2[1] = 0;
                 matrix2[2] = AR_LookUpTable.get(AR_Ids[0])[1];
                 matrix2[3] = 1;
+
+
                 Log.d("ARProcessing","Original tvec" + ARTranslation.get(AR_Ids[0]).dump());
                 double[] NC_coords = demon.homogeneousTransform(matrix1, matrix2); // w d h
                 Log.d("ARProcessing","New tvec" + Arrays.toString(NC_coords));
