@@ -96,10 +96,6 @@ public class YourService extends KiboRpcService {
         ////////////////////////// AR PROCESS //////////////////////////
 
         // shooting process //
-//        double[] parkingPos = new double[3];
-//        parkingPos[0] = target.getX() - 0.0572;
-//        parkingPos[1] = gotoPos.getY(); // current Y
-//        parkingPos[2] = gotoPos.getZ(); // current Z
         myMathmanager celes = new myMathmanager();
         Quaternion IgniteAngle = celes.rotationCalculator(gotoPos.getX()+0.0572+0.115,gotoPos.getY(),gotoPos.getZ()-0.1111-0.075, target.getX(), target.getY(), target.getZ(), 0);
         moveToWrapper(gotoPos.getX(),gotoPos.getY(),gotoPos.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
@@ -110,12 +106,23 @@ public class YourService extends KiboRpcService {
         api.laserControl(false);
 
 
+
         moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
         moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
 
+        ARbee = null;
+        celes = null;
+        System.gc();
+        Log.d("GC", "Memory cleared");
 
+        boolean result = api.reportMissionCompletion();
+        Log.d("REPORTMISSION", "mission report result: "+result);
+        while (!result) {
+            Log.d("REPORTMISSION", "Retrying");
+            result = api.reportMissionCompletion();
 
-        api.reportMissionCompletion();
+        }
+
 
     }
 
