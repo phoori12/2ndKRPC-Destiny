@@ -50,7 +50,6 @@ import org.opencv.aruco.Dictionary;
 public class YourService extends KiboRpcService {
 
     Mat airlock_snap; // will be initialize upon reading QR
-    double ncOffset_x = 0.042 , ncOffset_y = 0.117, ncOffset_z  = 0.083;
     Point gotoPos;
     Mat cameraMatrix;
     Mat distCoeffs;
@@ -63,8 +62,6 @@ public class YourService extends KiboRpcService {
         distCoeffs = new Mat(1, 5, CvType.CV_32FC1);
         String QRPointA = null;
         int max_try = 4;
-        int try_read = 0;
-        int AR_cast = 0;
         int sleep_time = 3;
 
         // Initialize camera intrinsic values //
@@ -88,21 +85,15 @@ public class YourService extends KiboRpcService {
         QRPointA = QR_method(max_try);
         api.sendDiscoveredQR(QRPointA);
 
-//        QRData = parseQRinfo(QRPointA);
-//        Log.d("QR", ""+ QRData[0] + ", " + QRData[1] + ", "+ QRData[2] + ", "+ QRData[3]);
-
+        ////////////////////////// AR PROCESS //////////////////////////
         ARProcessing ARbee = new ARProcessing(airlock_snap);
         Point target = ARbee.getTargetPosition();
-        ////////////////////////// AR PROCESS //////////////////////////
+
 
         // shooting process //
-//        double[] parkingPos = new double[3];
-//        parkingPos[0] = target.getX() - 0.0572;
-//        parkingPos[1] = gotoPos.getY(); // current Y
-//        parkingPos[2] = gotoPos.getZ(); // current Z
         myMathmanager celes = new myMathmanager();
-        Quaternion IgniteAngle = celes.rotationCalculator(gotoPos.getX()+0.0572+0.115,gotoPos.getY(),gotoPos.getZ()-0.1111-0.075, target.getX(), target.getY(), target.getZ(), 0);
-        moveToWrapper(gotoPos.getX(),gotoPos.getY(),gotoPos.getZ(), IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
+        Quaternion IgniteAngle = celes.rotationCalculator(gotoPos.getX()+0.0572+0.115,gotoPos.getY(),gotoPos.getZ()-0.1111-0.075-0.1, target.getX(), target.getY(), target.getZ(), 0);
+        moveToWrapper(gotoPos.getX(),gotoPos.getY(),gotoPos.getZ()-0.1, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
         //////////////////////
 
         api.laserControl(true);
@@ -110,12 +101,23 @@ public class YourService extends KiboRpcService {
         api.laserControl(false);
 
 
+
         moveToWrapper(10.5,-8.9,4.5,0,0,-0.707,0.707,0);
         moveToWrapper(10.6,-8,4.5,0,0,-0.707,0.707,0);
 
+        ARbee = null;
+        celes = null;
+        System.gc();
+        Log.d("GC", "Memory cleared");
 
+        boolean result = api.reportMissionCompletion();
+        Log.d("REPORTMISSION", "mission report result: "+result);
+        while (!result) {
+            Log.d("REPORTMISSION", "Retrying");
+            result = api.reportMissionCompletion();
 
-        api.reportMissionCompletion();
+        }
+
 
     }
 
@@ -311,17 +313,6 @@ public class YourService extends KiboRpcService {
                 pos[2] = NC_coords[1];
             }
 
-            // Camera frame to Laser Frame //
-//            pos[0] = NC_coords[0] - 0.0994;
-//            pos[1] = 0; // -NC_coords[2] + 0.0125
-//            pos[2] = NC_coords[1] + 0.0285;
-//            // Laser frame to Robot Frame //
-//            pos[0] = pos[0] + 0.0572;
-//            pos[1] = 0;
-//            pos[2] = pos[2] - 0.1111;
-           // Kinematics astrobee = api.getTrustedRobotKinematics();
-            //   moveToWrapper(10.9,-9.8,4.79,0,0,-0.707,0.707,5);
-//            Point point = new Point(10.9,-9.5,4.79);
             // Camera frame to robot frame //
             pos[0] -= 0.0422;
             pos[1] = 0; // -NC_coords[2] + 0.0125
@@ -371,20 +362,20 @@ public class YourService extends KiboRpcService {
             return new Quaternion(qua_x,qua_y,qua_z,qua_w);
         }
 
-        public Quaternion normalize(Quaternion q) {
-            double x = q.getX();
-            double y = q.getY();
-            double z = q.getZ();
-            double w = q.getW();
-            double norm = Math.sqrt(x*x + y*y + z*z + w*w);
-            double x_,y_,z_,w_;
-            x_ = x / norm;
-            y_ = y / norm;
-            z_ = z / norm;
-            w_ = w / norm;
-
-            return new Quaternion((float)x_,(float)y_,(float)z_,(float)w_);
-        }
+//        public Quaternion normalize(Quaternion q) {
+//            double x = q.getX();
+//            double y = q.getY();
+//            double z = q.getZ();
+//            double w = q.getW();
+//            double norm = Math.sqrt(x*x + y*y + z*z + w*w);
+//            double x_,y_,z_,w_;
+//            x_ = x / norm;
+//            y_ = y / norm;
+//            z_ = z / norm;
+//            w_ = w / norm;
+//
+//            return new Quaternion((float)x_,(float)y_,(float)z_,(float)w_);
+//        }
 
         public double[] ToEuler(Quaternion q) {
             // EULER ZYX ORDER
@@ -417,28 +408,6 @@ public class YourService extends KiboRpcService {
             attitude = Math.toDegrees(Math.asin(2*test/unit));
             bank = Math.toDegrees(Math.atan2(2*x*w-2*y*z , -sqx + sqy - sqz + sqw));
             return new double[] {bank,heading,attitude};
-        }
-
-        public Quaternion ToQuaternion(double roll, double pitch, double yaw) // yaw (Z), pitch (Y), roll (X)
-        {
-            roll = Math.toRadians(roll);
-            pitch = Math.toRadians(pitch);
-            yaw = Math.toRadians(yaw);
-            // Abbreviations for the various angular functions
-            double cy = Math.cos(yaw * 0.5);
-            double sy = Math.sin(yaw * 0.5);
-            double cp = Math.cos(pitch * 0.5);
-            double sp = Math.sin(pitch * 0.5);
-            double cr = Math.cos(roll * 0.5);
-            double sr = Math.sin(roll * 0.5);
-
-
-            float qua_w = (float)(cr * cp * cy + sr * sp * sy);
-            float qua_x = (float)(sr * cp * cy - cr * sp * sy);
-            float qua_y = (float)(cr * sp * cy + sr * cp * sy);
-            float qua_z = (float)(cr * cp * sy - sr * sp * cy);
-
-            return new Quaternion(qua_x, qua_y, qua_z, qua_w);
         }
 
 
@@ -489,17 +458,17 @@ public class YourService extends KiboRpcService {
         }
     }
 
-    public double[] parseQRinfo(String QRData) // no need
-    {
-        String[] remnants = QRData.split(",");
-
-        double parsedDouble[] = new double[4];
-        for (int i = 0;i< remnants.length;i++) {
-            parsedDouble[i] = Double.parseDouble(remnants[i].replaceAll("[^0-9. ]", ""));
-        }
-
-        return parsedDouble;
-    }
+//    public double[] parseQRinfo(String QRData) // no need
+//    {
+//        String[] remnants = QRData.split(",");
+//
+//        double parsedDouble[] = new double[4];
+//        for (int i = 0;i< remnants.length;i++) {
+//            parsedDouble[i] = Double.parseDouble(remnants[i].replaceAll("[^0-9. ]", ""));
+//        }
+//
+//        return parsedDouble;
+//    }
 
     public void sleep(int timer) throws InterruptedException
     {
