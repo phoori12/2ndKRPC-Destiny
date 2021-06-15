@@ -96,38 +96,30 @@
     <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support.constraint:constraint-layout-solver:1.0.2@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.zxing:javase:3.3.3@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: me.dm7.barcodescanner:zxing:1.9@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:rosgraph_msgs:1.11.2@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:geometry_msgs:1.12.7@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_core:rosjava:0.2.2@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.android_core:android_10:0.2.1@aar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-vision-common:15.0.0@aar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.beust:jcommander:1.72@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-annotations:26.1.0@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_core:apache_xmlrpc_common:0.2.2@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.quickbirdstudios:opencv:3.4.4-contrib@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:tf2_msgs:0.5.20@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:nav_msgs:1.11.9@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.google.guava:guava:12.0@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.zxing:core:3.3.3@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: android.arch.lifecycle:runtime:1.0.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support.constraint:constraint-layout:1.0.2@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: me.dm7.barcodescanner:zbar:1.9.8@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-fragment:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: android.arch.lifecycle:common:1.0.0@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-base:15.0.1@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:rosjava_test_msgs:0.2.1@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-core-utils:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-vector-drawable:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:sensor_msgs:1.11.9@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_core:apache_xmlrpc_client:0.2.2@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-tasks:15.0.1@aar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-vision:15.0.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: dnsjava:dnsjava:2.1.1@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-compat:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:com.springsource.org.apache.commons.io:1.4.0@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-clearcut:15.0.1@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:animated-vector-drawable:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:com.springsource.org.apache.commons.logging:1.1.1@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: me.dm7.barcodescanner:core:1.9.8@aar" level="project" />
@@ -138,25 +130,22 @@
     <orderEntry type="library" exported="" name="Gradle: org.apache.ws.commons:ws-commons-util:1.0.1@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:com.springsource.org.apache.commons.lang:2.4.0@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_bootstrap:gradle_plugins:0.3.3@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.github.jai-imageio:jai-imageio-core:1.4.0@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: io.netty:netty:3.5.2.Final@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_core:apache_xmlrpc_server:0.2.2@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: 2ndKRPC-Destiny:guest_science_library:unspecified@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: android.arch.core:common:1.0.0@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-v4:26.1.0@aar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-basement:15.0.1@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_bootstrap:message_generation:0.3.3@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-media-compat:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:diagnostic_msgs:1.11.9@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:com.springsource.org.apache.commons.net:2.0.0@jar" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: com.google.zxing:core:3.2.1@jar" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: junit:junit:4.12@jar" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:appcompat-v7:26.1.0@aar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-flags:15.0.1@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.ros.rosjava_messages:std_msgs:0.5.11@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-core-ui:26.1.0@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: 2ndKRPC-Destiny:kibo_rpc_api:unspecified@aar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:com.springsource.org.apache.commons.codec:1.3.0@jar" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: com.google.android.gms:play-services-phenotype:15.0.1@aar" level="project" />
   </component>
 </module>
