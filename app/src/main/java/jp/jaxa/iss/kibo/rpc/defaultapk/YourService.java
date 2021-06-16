@@ -92,7 +92,9 @@ public class YourService extends KiboRpcService {
 
         // shooting process //
         myMathmanager celes = new myMathmanager();
-        Quaternion IgniteAngle = celes.rotationCalculator(gotoPos.getX()+0.0572+0.115,gotoPos.getY(),gotoPos.getZ()-0.1111-0.075-0.1, target.getX(), target.getY(), target.getZ(), 0);
+        double magic_x = 0.121; // 0.115
+        double magic_z = 0.071; //0.075
+        Quaternion IgniteAngle = celes.rotationCalculator(gotoPos.getX()+0.0572+magic_x,gotoPos.getY(),gotoPos.getZ()-0.1111-magic_z-0.1, target.getX(), target.getY(), target.getZ(), 0);
         moveToWrapper(gotoPos.getX(),gotoPos.getY(),gotoPos.getZ()-0.1, IgniteAngle.getX(), IgniteAngle.getY(), IgniteAngle.getZ(), IgniteAngle.getW(), 2);
         //////////////////////
 
